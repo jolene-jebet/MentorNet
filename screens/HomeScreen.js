@@ -1,7 +1,24 @@
-import { View } from "react-native"
-import { Text } from "react-native-elements"
+import React from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, Icon } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
+
+    const navigation = useNavigation();
+
+    const handleStudentPress = () => {
+        navigation.navigate('');
+    };
+
+    const handleInstructorPress = () => {
+        navigation.navigate('');
+    };
+
+    const handleSchoolPress = () => {
+        navigation.navigate('');
+    };
+
     return(
         <View>
             <Text>
