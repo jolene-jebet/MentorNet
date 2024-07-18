@@ -1,4 +1,4 @@
-package com.anonymous.mentornet
+package com.mentornet
 
 import android.os.Build
 import android.os.Bundle

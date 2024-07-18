@@ -1,4 +1,4 @@
-package com.anonymous.mentornet
+package com.mentornet
 
 import android.app.Application
 import android.content.res.Configuration

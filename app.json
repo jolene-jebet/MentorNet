@@ -2,12 +2,6 @@
   "expo": {
     "name": "MentorNet",
     "slug": "MentorNet",
-    "version": "1.0.0",
-    "android": {
-      "package": "com.anonymous.mentornet"
-    },
-    "ios": {
-      "bundleIdentifier": "com.anonymous.mentornet"
-    }
+    "version": "1.0.0"
   }
 }

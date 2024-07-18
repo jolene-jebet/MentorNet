@@ -9,7 +9,7 @@ const Profile = () => {
     email: "mary.olwal@ireporter.com",
     cellphone: "0712345678",
     gender: "Female",
-    profileImage: require(''),
+    profileImage: require('assets/images/teacher-medium-dark-skin-tone-svgrepo-com.svg'),
   };
 
   return (
