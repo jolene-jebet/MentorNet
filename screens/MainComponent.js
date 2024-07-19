@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import Constants from 'expo-constants';
-import HomeScreen from './HomeScreen';
+import SignUpScreen from './SignUpScreen';
 import { View } from 'react-native';
 import { Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -23,13 +23,13 @@ const screenOptions = {
     
 };
 
-const HomeNavigator = () => {
+const SignupNavigator = () => {
     const Stack = createStackNavigator();
     return (
         <Stack.Navigator screenOptions={screenOptions}>
             <Stack.Screen
                 name='Mentor Net'
-                component={HomeScreen}
+                component={SignUpScreen}
                 options={{ title: 'Mentor Net' }}
             />
         </Stack.Navigator>
@@ -44,7 +44,7 @@ const Main = () => {
                     Platform.OS === 'ios' ? 0 : Constants.statusBarHeight
             }}
         >
-            <HomeNavigator/>
+            <SignupNavigator/>
         </View>
     );
 };

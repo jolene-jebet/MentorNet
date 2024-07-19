@@ -4,7 +4,7 @@ import { Text, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
 
-const HomeScreen = () => {
+const SignUpScreen = () => {
 
     const navigation = useNavigation();
 
@@ -102,4 +102,4 @@ const styles = StyleSheet.create({
     },
   });
 
-export default HomeScreen;
+export default SignUpScreen;
