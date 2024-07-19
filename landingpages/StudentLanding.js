@@ -1,107 +1,129 @@
 import React from "react";
-import { View, StyleSheet, Image} from "react-native";
+import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import{ Card, Text } from "react-native-elements";
 
 const StudentLanding = () => {
     return(
         
         <View >
-            <View containerStyle={styles.headerContainer} >
+            <View >
                 {/* first container containing the header text */}
                 <>
                     <Text style={{fontSize: 20, fontWeight: 'bold'}}>Welcome,</Text>
                 </>
                 <>
-                    <Text style={{fontSize: 30, fontWeight: 'extra-bold'}}>Hello,</Text>
+                    <Text style={{fontSize: 30, fontWeight: 'extra-bold'}}>Nelly Waiganjo</Text>
                 </>
             </View>
             
              {/* second container containing cards */}
-             <View containerStyle={styles.bodyContainer}>
+             <View containerStyle={styles.bodyContainer} >
 
-                {/* PROFILE CARD */}
-                <Card style={{justifyContent: 'center'}}>
-                    {/* image of the card */}
-                    <Card.Image source={'../assets/images/account-avatar-profile-user-6-svgrepo-com.svg'} style={{
-                        width: 50,
-                        height: 50,
-                        borderRadius: 50,
-                        margin: 10
-                    }}/>
-                    {/* card text/ header */}
-                    <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>Profile</Card.Title>
+                <ScrollView>
+                    <TouchableOpacity
+                        // onPress={}  
+                    >
+                        {/* PROFILE CARD */}
+                        <Card style={{justifyContent: 'center', backgroundColor: '#584D4D', width: 50}}>
+                            {/* image of the card */}
+                            <Card.Image source={'../assets/images/account-avatar-profile-user-6-svgrepo-com.svg'} style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 50,
+                                margin: 10
+                            }}/>
+                            {/* card text/ header */}
+                            <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>Profile</Card.Title>
+                        </Card>
+                    </TouchableOpacity>
+                    
 
-                </Card>
+                    <TouchableOpacity
+                        // onPress={}  
+                    >
+                        {/* COURSE WORK CARD */}
+                        <Card style={{justifyContent: 'center', backgroundColor: '584D4D'}}>
+                            {/* image of the card */}
+                            <Card.Image source={'../assets/images/account-avatar-profile-user-6-svgrepo-com.svg'} style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 50,
+                                margin: 10
+                            }}/>
+                            {/* card text/ header */}
+                            <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>course work</Card.Title>
+                        </Card>
+                    </TouchableOpacity>
 
-                {/* COURSE WORK CARD */}
-                <Card style={{justifyContent: 'center'}}>
-                    {/* image of the card */}
-                    <Card.Image source={'../assets/images/assets/images/desk-classroom-svgrepo-com.svg'} style={{
-                        width: 50,
-                        height: 50,
-                        borderRadius: 50,
-                        margin: 10
-                    }}/>
-                    {/* card text/ header */}
-                    <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>Profile</Card.Title>
+                    <TouchableOpacity
+                        // onPress={}  
+                    >
+                        {/* LIBRARY CARD */}
+                        <Card style={{justifyContent: 'center' , backgroundColor: '584D4D'}}>
+                            {/* image of the card */}
+                            <Card.Image source={'../assets/images/account-avatar-profile-user-6-svgrepo-com.svg'} style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 50,
+                                margin: 10
+                            }}/>
+                            {/* card text/ header */}
+                            <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>library</Card.Title>
+                        </Card>
+                    </TouchableOpacity>
 
-                </Card>
+                    <TouchableOpacity
+                        // onPress={}  
+                    >
+                        {/* ATTENDANCE CARD */}
+                        <Card style={{justifyContent: 'center', backgroundColor: '584D4D'}}>
+                            {/* image of the card */}
+                            <Card.Image source={'../assets/images/account-avatar-profile-user-6-svgrepo-com.svg'} style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 50,
+                                margin: 10
+                            }}/>
+                            {/* card text/ header */}
+                            <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>attendance</Card.Title>
+                        </Card>
+                    </TouchableOpacity>
 
-                {/* LIBRARY CARD */}
-                <Card style={{justifyContent: 'center'}}>
-                    {/* image of the card */}
-                    <Card.Image source={'../assets/images/assets/images/library-book-svgrepo-com.svg'} style={{
-                        width: 50,
-                        height: 50,
-                        borderRadius: 50,
-                        margin: 10
-                    }}/>
-                    {/* card text/ header */}
-                    <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>Profile</Card.Title>
+                    <TouchableOpacity
+                        // onPress={}  
+                    >
+                        {/* CHAT ROOM CARD */}
+                        <Card style={{justifyContent: 'center', backgroundColor: '584D4D'}}>
+                            {/* image of the card */}
+                            <Card.Image source={'../assets/images/account-avatar-profile-user-6-svgrepo-com.svg'} style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 50,
+                                margin: 10
+                            }}/>
+                            {/* card text/ header */}
+                            <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>chat room</Card.Title>
+                        </Card>
+                    </TouchableOpacity>
 
-                </Card>
+                    <TouchableOpacity
+                        // onPress={}  
+                    >
+                        {/* TEST CARD */}
+                        <Card style={{justifyContent: 'center', backgroundColor: '584D4D'}}>
+                            {/* image of the card */}
+                            <Card.Image source={'../assets/images/account-avatar-profile-user-6-svgrepo-com.svg'} style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 50,
+                                margin: 10
+                            }}/>
+                            {/* card text/ header */}
+                            <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>test</Card.Title>
+                        </Card>
+                    </TouchableOpacity>
 
-                {/* ATTENDANCE CARD */}
-                <Card style={{justifyContent: 'center'}}>
-                    {/* image of the card */}
-                    <Card.Image source={'../assets/images/assets/images/check-list-svgrepo-com.svg'} style={{
-                        width: 50,
-                        height: 50,
-                        borderRadius: 50,
-                        margin: 10
-                    }}/>
-                    {/* card text/ header */}
-                    <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>Profile</Card.Title>
-
-                </Card>
-
-                {/* CHATROOM CARD */}
-                <Card style={{justifyContent: 'center'}}>
-                    {/* image of the card */}
-                    <Card.Image source={'../assets/images/assets/images/chat-bubbles-svgrepo-com.svg'} style={{
-                        width: 50,
-                        height: 50,
-                        borderRadius: 50,
-                        margin: 10
-                    }}/>
-                    {/* card text/ header */}
-                    <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>Profile</Card.Title>
-
-                </Card>
-
-                {/* TEST CARD */}
-                <Card style={{justifyContent: 'center'}}>
-                    {/* image of the card */}
-                    <Card.Image source={'../assets/images/assets/images/exam-svgrepo-com.svg'} style={{
-                        width: 50,
-                        height: 50,
-                        borderRadius: 50,
-                        margin: 10
-                    }}/>
-                    {/* card text/ header */}
-                    <Card.Title style={{alignSelf: 'center', fontWeight: 'bold'}}>Profile</Card.Title>
-
-                </Card>
+                </ScrollView>
 
              </View>
         </View>
@@ -109,5 +131,14 @@ const StudentLanding = () => {
         
     );
 }
+
+const styles = StyleSheet.create({
+    bodyContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+    },
+});
 
 export default StudentLanding;
