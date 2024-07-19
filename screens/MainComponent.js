@@ -44,6 +44,7 @@ const Main = () => {
                     Platform.OS === 'ios' ? 0 : Constants.statusBarHeight
             }}
         >
+            <HomeScreen/>
             <SignupNavigator/>
         </View>
     );
