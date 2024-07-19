@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
+
 const HomeScreen = () => {
 
     const navigation = useNavigation();
@@ -20,8 +21,8 @@ const HomeScreen = () => {
     };
 
     return(
-        <View>
-            <Text>
+        <View style={styles.container}>
+             <Text style={styles.text}>
                 Where educaction is empowered anytime, anywhere.
             </Text>
             <View style={styles.signup}>
