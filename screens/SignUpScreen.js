@@ -22,11 +22,8 @@ const SignUpScreen = () => {
 
     return(
         <View style={styles.container}>
-             <Text style={styles.text}>
-                Where educaction is empowered anytime, anywhere.
-            </Text>
+            <Text style={styles.signupText}>Sign Up as:</Text>
             <View style={styles.signup}>
-                <Text style={styles.signupText}>Sign Up as:</Text>
                 <TouchableOpacity style={styles.signupOption} onPress={handleStudentPress}>
                     <Icon
                         name='home'
@@ -85,16 +82,17 @@ const styles = StyleSheet.create({
     },
     signupText: {
       color: 'white',
-      fontSize: 18,
+      fontSize: 28,
       fontWeight: 'bold',
-      marginBottom: 30,  
+      marginBottom: 50,  
     },
     signupOption: {
       alignItems: 'center',   
       marginBottom: 60,       
     },
     icon: {
-      marginBottom: 10,       
+      marginBottom: 10,  
+      marginTop:25     
     },
     optionText: {
       fontSize: 18,
