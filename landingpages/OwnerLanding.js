@@ -30,7 +30,7 @@ const OwnerLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/profile.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -47,8 +47,8 @@ const OwnerLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
-                                    style={styles.cardImage}
+                                    source={require('../assets/images/classroom.png')}
+                                    style={[styles.cardImage, {width: 130, height: 100}]}
                                 />
                                 {/* card title */}
                                 <Text style={styles.cardTitle}>Classroom</Text>
@@ -64,8 +64,8 @@ const OwnerLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
-                                    style={styles.cardImage}
+                                    source={require('../assets/images/teacher.png')}
+                                    style={[styles.cardImage, { width: 130, height: 100 }]}
                                 />
                                 {/* card title */}
                                 <Text style={styles.cardTitle}>Add teacher</Text>
@@ -81,8 +81,8 @@ const OwnerLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
-                                    style={styles.cardImage}
+                                    source={require('../assets/images/students.png')}
+                                    style={[styles.cardImage, { width: 130, height: 150 }]}
                                 />
                                 {/* card title */}
                                 <Text style={styles.cardTitle}>Add Student</Text>
@@ -140,8 +140,8 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
     },
     cardImage: {
-        width: 50,
-        height: 50,
+        width: 100,
+        height: 100,
         borderRadius: 25, 
         marginBottom: 10,
     },
