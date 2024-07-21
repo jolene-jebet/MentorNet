@@ -61,11 +61,11 @@ const TeacherLanding = () => {
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
-                            <View style={[styles.cardContent, { width:160, height: 150}]}>
+                            <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
                                     source={require('../assets/images/library.png')}
-                                    style={styles.cardImage}
+                                    style={[styles.cardImage, {width: 140, height:60}]}
                                 />
                                 {/* card title */}
                                 <Text style={styles.cardTitle}>Library</Text>
