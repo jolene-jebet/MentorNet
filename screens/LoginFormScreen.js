@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         width: '80%',
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 50,
         paddingBottom: 40, // Increased paddingBottom for more space at the bottom
     },
     button: {
