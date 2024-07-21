@@ -30,7 +30,7 @@ const TeacherLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/profile.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -47,7 +47,7 @@ const TeacherLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/course-work.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -61,10 +61,10 @@ const TeacherLanding = () => {
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
-                            <View style={styles.cardContent}>
+                            <View style={[styles.cardContent, { width:160, height: 150}]}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/library.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -81,7 +81,7 @@ const TeacherLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/attendance.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -98,8 +98,8 @@ const TeacherLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
-                                    style={styles.cardImage}
+                                    source={require('../assets/images/classroom.png')}
+                                    style={[styles.cardImage, {width:130}]}
                                 />
                                 {/* card title */}
                                 <Text style={styles.cardTitle}>Classroom</Text>
@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
     },
     cardImage: {
-        width: 50,
-        height: 50,
+        width: 100,
+        height: 100,
         borderRadius: 25, 
         marginBottom: 10,
     },
