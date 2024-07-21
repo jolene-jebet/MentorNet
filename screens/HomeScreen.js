@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     icon: {
-        marginTop: 100
+        marginTop: 180
     },
     text: {
         color: 'white',
