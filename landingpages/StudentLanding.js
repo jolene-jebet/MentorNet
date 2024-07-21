@@ -175,7 +175,7 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/profile.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -192,7 +192,7 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/course-work.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -209,8 +209,8 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
-                                    style={styles.cardImage}
+                                    source={require('../assets/images/library.png')}
+                                    style={[styles.cardImage, {width: 140, height: 60}]}
                                 />
                                 {/* card title */}
                                 <Text style={styles.cardTitle}>Library</Text>
@@ -226,7 +226,7 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/attendance.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -243,8 +243,8 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
-                                    style={styles.cardImage}
+                                    source={require('../assets/images/chat-room.png')}
+                                    style={[styles.cardImage, {width: 150, height: 100}]}
                                 />
                                 {/* card title */}
                                 <Text style={styles.cardTitle}>Chat room</Text>
@@ -260,7 +260,7 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/test.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -318,8 +318,8 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
     },
     cardImage: {
-        width: 50,
-        height: 50,
+        width: 100,
+        height: 100,
         borderRadius: 25, 
         marginBottom: 10,
     },
