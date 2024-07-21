@@ -7,7 +7,7 @@ import TeacherForm from './forms/TeacherForm';
 
 export default function App() {
   return (
-    <SchoolForm/>
+    <StudentForm/>
   );
 }
 
