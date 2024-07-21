@@ -7,7 +7,7 @@ const HomeScreen = () => {
     const navigation = useNavigation();
 
     const handleLoginPress = () => {
-        navigation.navigate('LoginFormScreen'); // Navigate to 'LoginFormScreen' screen
+        navigation.navigate('LoginFormScreen'); 
     };
 
     return (
@@ -41,8 +41,6 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 45,
         fontWeight: 'bold',
-        //marginBottom: ,
-        fontFamily: 'roboto'
     },
     heroText: {
         color: "white",
