@@ -1,105 +1,63 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Icon } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
-
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Icon, Text } from 'react-native-elements';
 
 const HomeScreen = () => {
-
     const navigation = useNavigation();
 
-    const handleStudentPress = () => {
-        navigation.navigate('');
+    const handleLoginPress = () => {
+        navigation.navigate('LoginFormScreen'); 
     };
 
-    const handleInstructorPress = () => {
-        navigation.navigate('');
-    };
-
-    const handleSchoolPress = () => {
-        navigation.navigate('');
-    };
-
-    return(
+    return (
         <View style={styles.container}>
-             <Text style={styles.text}>
-                Where educaction is empowered anytime, anywhere.
-            </Text>
-            <View style={styles.signup}>
-                <Text style={styles.signupText}>Sign Up as:</Text>
-                <TouchableOpacity style={styles.signupOption} onPress={handleStudentPress}>
-                    <Icon
-                        name='home'
-                        type='font-awesome'
-                        size={40}
-                        style={styles.icon}
-                    />
-                    <Text style={styles.optionText}>Student</Text>
-                </TouchableOpacity>
-
-                
-                <TouchableOpacity style={styles.signupOption} onPress={handleInstructorPress}>
-                    <Icon
-                        name='home'
-                        type='font-awesome'
-                        size={40}
-                        style={styles.icon}
-                    />
-                    <Text style={styles.optionText}>Instructor</Text>
-                </TouchableOpacity>
-
-
-                <TouchableOpacity style={styles.signupOption} onPress={handleSchoolPress}>
-                    <Icon
-                        name='home'
-                        type='font-awesome'
-                        size={40}
-                        style={styles.icon}
-                    />
-                    <Text style={styles.optionText}>School</Text>
-                </TouchableOpacity>
-            </View>
+             <Icon
+                name='book'
+                type='font-awesome'
+                color='#fff'
+                size={60}
+                style={styles.icon}
+            />
+            <Text style={styles.text}>Mentor Net</Text>
+            <Text style={styles.heroText}>Where educaction is empowered anytime, anywhere.</Text>
+            <TouchableOpacity style={styles.btn} onPress={handleLoginPress}>
+                <Text style={styles.btnText}>Get Started</Text>
+            </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
+
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: 'black',
-      justifyContent: 'center',  
-      alignItems: 'center',      
-    },
-    text: {
-      color: 'white',
-      textAlign: 'center',
-      fontSize: 24,
-      marginBottom: 50,  
-    },
-    signup: {
-      backgroundColor: '#584D4D',
-      padding: 20,       
-      borderRadius: 5,
-      width: '80%',     
-      alignItems: 'center',
-      height: 500 
-    },
-    signupText: {
-      color: 'white',
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 30,  
-    },
-    signupOption: {
-      alignItems: 'center',   
-      marginBottom: 60,       
+        flex: 1,
+        backgroundColor: 'black',
+        alignItems: 'center',
     },
     icon: {
-      marginBottom: 10,       
+        marginTop: 180
     },
-    optionText: {
-      fontSize: 18,
-      color: 'white',
+    text: {
+        color: 'white',
+        fontSize: 45,
+        fontWeight: 'bold',
     },
-  });
+    heroText: {
+        color: "white",
+        marginTop: 30,
+        fontSize: 24,
+        textAlign: "center"
+    },
+    btn: {
+        backgroundColor:"#584D4D",
+        marginTop:40,
+        borderRadius: 20,
+        borderWidth: 8,
+        padding: 10,
+    },
+    btnText: {
+        color: "white"
+    }
+});
 
 export default HomeScreen;
