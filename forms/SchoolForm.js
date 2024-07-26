@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput } from 'react-native';
 import { Text, Button } from 'react-native-elements';
@@ -30,8 +31,10 @@ const SchoolForm = () => {
   };
 
   const handleSubmit = () => {
-    // Add your submission logic here
+    Navigation.navigate ('OwnerLanding');
   };
+  const Navigation = useNavigation();
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -112,7 +115,9 @@ const SchoolForm = () => {
       </View>
     </ScrollView>
   );
-};
+
+  
+  };
 
 const styles = StyleSheet.create({
   container: {
@@ -123,7 +128,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 20,
-    marginTop : 40,
+   
   },
   icon: {
     width: 50,
