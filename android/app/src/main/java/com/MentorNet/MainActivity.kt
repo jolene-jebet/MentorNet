@@ -1,4 +1,4 @@
-package com.mentornet
+package com.MentorNet
 
 import android.os.Build
 import android.os.Bundle

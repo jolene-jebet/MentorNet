@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, View, TextInput, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, { useState} from 'react';
+import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
+import { Text } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker';
-import { Icon } from 'react-native-elements';
+import { studentOps } from '../components/database';
+
+
 
 const StudentForm = () => {
   const [firstName, setFirstName] = useState('');
@@ -10,10 +14,66 @@ const StudentForm = () => {
   const [selectedClass, setSelectedClass] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [selectedGender, setSelectedGender] = useState('');
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = () => {};
+  
+
+  const validate = () => {
+    let valid = true;
+    let errors = {};
+  
+    if (!firstName) {
+      valid = false;
+      errors.firstName = 'First Name is required';
+    }
+    if (!lastName) {
+      valid = false;
+      errors.lastName = 'Last Name is required';
+    }
+    if (!email) {
+      valid = false;
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      valid = false;
+      errors.email = 'Email is invalid';
+    }
+    if (!selectedClass) {
+      valid = false;
+      errors.selectedClass = 'Class is required';
+    }
+    if (!dateOfBirth) {
+      valid = false;
+      errors.dateOfBirth = 'Date of Birth is required';
+    }
+    if (!selectedGender) {
+      valid = false;
+      errors.selectedGender = 'Gender is required';
+    }
+  
+    setErrors(errors);
+    return valid;
+  };
+  
+  const handleSubmit = async () => {
+    if (validate()) {
+      try {
+        const newStudentId = await studentOps.insert(firstName, lastName, email, selectedClass, dateOfBirth, selectedGender);
+        Alert.alert('Success', `New student added with ID: ${newStudentId}`);
+        // Clear form after successful submission
+        setFirstName(''); 
+        setLastName('');
+        setEmail('');
+        setSelectedClass('');
+        setDateOfBirth('');
+        setSelectedGender('');
+      } catch (error) {
+        Alert.alert('Error', 'Failed to add student: ' + error.message);
+      }
+    }
+  };
 
   return (
+    <ScrollView>
     <SafeAreaView style={styles.safeContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
@@ -33,6 +93,7 @@ const StudentForm = () => {
               value={firstName}
               onChangeText={setFirstName}
             />
+            {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -42,6 +103,7 @@ const StudentForm = () => {
               value={lastName}
               onChangeText={setLastName}
             />
+            {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -51,6 +113,7 @@ const StudentForm = () => {
               value={email}
               onChangeText={setEmail}
             />
+            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -66,6 +129,7 @@ const StudentForm = () => {
                 <Picker.Item label="Class 2" value="Class 2" />
               </Picker>
             </View>
+            {errors.selectedClass && <Text style={styles.errorText}>{errors.selectedClass}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -75,6 +139,7 @@ const StudentForm = () => {
               value={dateOfBirth}
               onChangeText={setDateOfBirth}
             />
+            {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -90,6 +155,7 @@ const StudentForm = () => {
                 <Picker.Item label="Female" value="Female" />
               </Picker>
             </View>
+            {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
           </View>
 
           <View style={styles.buttonContainer}>
@@ -99,21 +165,25 @@ const StudentForm = () => {
             <TouchableOpacity style={styles.cancelButton}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
+            
           </View>
+
         </View>
       </View>
     </SafeAreaView>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
-    backgroundColor: 'black', 
+    backgroundColor: 'black',
   },
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 20,
+    backgroundColor: 'black',
   },
   header: {
     flexDirection: 'row',
@@ -124,40 +194,45 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 18,
-    color: 'white', // White text for header
+    color: 'white',
   },
   icon: {
     width: 24,
     height: 24,
   },
   form: {
-    backgroundColor: '#4E4037', // Form background color
+    backgroundColor: '#4E4037',
     padding: 20,
     borderRadius: 10,
   },
   inputContainer: {
-    marginBottom: 20,
-    marginTop: 10,
+    marginBottom: 15,
   },
   label: {
     fontSize: 16,
-    color: 'white', // White text for labels
+    color: 'white',
     marginBottom: 5,
   },
-  input: {
-    height: 40,
-    backgroundColor: '#B8A8A2', // Background color for inputs
-    color: 'black', // Text color for inputs
-    padding: 10,
+  inputWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#B8A8A2',
     borderRadius: 5,
+    paddingHorizontal: 10,
   },
-  pickerContainer: {
-    backgroundColor: '#B8A8A2', // Background color for picker container
-    borderRadius: 5,
+  input: {
+    flex: 1,
+    height: 40,
+    color: 'black',
+    paddingVertical: 10,
+  },
+  iconInsideInput: {
+    marginLeft: 10,
   },
   picker: {
+    flex: 1,
     height: 40,
-    color: 'black', // Text color for picker items
+    color: 'black',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -165,21 +240,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   submitButton: {
-    backgroundColor: '#8E806A', // Submit button color
+    backgroundColor: '#8E806A',
     padding: 10,
     borderRadius: 5,
     width: '45%',
   },
   cancelButton: {
-    backgroundColor: '#A35638', // Cancel button color
+    backgroundColor: '#A35638',
     padding: 10,
     borderRadius: 5,
     width: '45%',
   },
   buttonText: {
-    color: 'white', // White text for buttons
+    color: 'white',
     textAlign: 'center',
     fontSize: 16,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
   },
 });
 

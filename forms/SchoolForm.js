@@ -1,9 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput } from 'react-native';
-import { Text, Button } from 'react-native-elements';
+import { View, TextInput, TouchableOpacity, Alert, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
-
+import {schoolOps} from '../components/database';
 const SchoolForm = () => {
   const [schoolName, setSchoolName] = useState('');
   const [schoolLogo, setSchoolLogo] = useState(null);
@@ -11,30 +9,68 @@ const SchoolForm = () => {
   const [telephone, setTelephone] = useState('');
   const [email, setEmail] = useState('');
   const [missionValues, setMissionValues] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    let valid = true;
+    let errors = {};
+
+    if (!schoolName) {
+      valid = false;
+      errors.schoolName = 'School Name is required';
+    }
+
+    if (!address) {
+      valid = false;
+      errors.address = 'Address is required';
+    }
+
+    if (!telephone) {
+      valid = false;
+      errors.telephone = 'Telephone is required';
+    }
+
+    if (!email) {
+      valid = false;
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      valid = false;
+      errors.email = 'Email is invalid';
+    }
+
+    setErrors(errors);
+    return valid;
+  };
 
   const handleSelectImage = () => {
-    const options = {
-      mediaType: 'photo',
-      quality: 1,
-    };
-
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+        console.log('User canceled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
       } else {
-        const { uri } = response.assets[0];
-        setSchoolLogo(uri);
+        setSchoolLogo(response.assets[0].uri); 
       }
     });
   };
 
-  const handleSubmit = () => {
-    Navigation.navigate ('OwnerLanding');
+  const handleSubmit = async () => {
+    if (validate()) {
+      try {
+        const newSchoolId = await schoolOps.insert(schoolName, schoolLogo, address, telephone, email, missionValues);
+        Alert.alert('Success', `New school added with ID: ${newSchoolId}`);
+        // Clear form fields
+        setSchoolName('');
+        setSchoolLogo(null);
+        setAddress('');
+        setTelephone('');
+        setEmail('');
+        setMissionValues('');
+      } catch (error) {
+        Alert.alert('Error', 'Failed to add school: ' + error.message);
+      }
+    }
   };
-  const Navigation = useNavigation();
-
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -53,7 +89,9 @@ const SchoolForm = () => {
             style={styles.input}
             value={schoolName}
             onChangeText={setSchoolName}
+            placeholder="Enter School Name"
           />
+          {errors.schoolName && <Text style={styles.errorText}>{errors.schoolName}</Text>}
         </View>
 
         <View style={styles.inputContainer}>
@@ -73,7 +111,9 @@ const SchoolForm = () => {
             style={styles.input}
             value={address}
             onChangeText={setAddress}
+            placeholder="Enter Address"
           />
+          {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
         </View>
 
         <View style={styles.inputContainer}>
@@ -82,7 +122,10 @@ const SchoolForm = () => {
             style={styles.input}
             value={telephone}
             onChangeText={setTelephone}
+            placeholder="Enter Telephone"
+            keyboardType="phone-pad"
           />
+          {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
         </View>
 
         <View style={styles.inputContainer}>
@@ -91,7 +134,10 @@ const SchoolForm = () => {
             style={styles.input}
             value={email}
             onChangeText={setEmail}
+            placeholder="Enter Email"
+            keyboardType="email-address"
           />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
         </View>
 
         <View style={styles.inputContainer}>
@@ -101,6 +147,7 @@ const SchoolForm = () => {
             value={missionValues}
             onChangeText={setMissionValues}
             multiline={true}
+            placeholder="Enter Mission and Values"
           />
         </View>
 
@@ -115,20 +162,17 @@ const SchoolForm = () => {
       </View>
     </ScrollView>
   );
-
-  
-  };
+};
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: 'black', 
+    backgroundColor: 'black',
   },
   header: {
     alignItems: 'center',
     marginBottom: 20,
-   
   },
   icon: {
     width: 50,
@@ -140,16 +184,16 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
-    color: 'white', // Header text color
+    color: 'white',
     textAlign: 'center',
   },
   headerSubText: {
     fontSize: 16,
-    color: 'white', // Subheader text color
+    color: 'white',
     textAlign: 'center',
   },
   form: {
-    backgroundColor: '#403432', // Form background color
+    backgroundColor: '#403432',
     padding: 20,
     borderRadius: 10,
   },
@@ -158,18 +202,18 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: 'white', // Label text color
+    color: 'white',
     marginBottom: 5,
   },
   input: {
     height: 40,
-    backgroundColor: '#B8A8A2', // Input background color
-    color: 'black', // Input text color
+    backgroundColor: '#B8A8A2',
+    color: 'black',
     padding: 10,
     borderRadius: 5,
   },
   textArea: {
-    height: 80, // Adjust height for multiline text input
+    height: 80,
   },
   imagePicker: {
     height: 150,
@@ -178,7 +222,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#B8A8A2', // Image picker background color
+    backgroundColor: '#B8A8A2',
   },
   image: {
     width: '100%',
@@ -194,21 +238,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   submitButton: {
-    backgroundColor: '#8E806A', // Submit button color
+    backgroundColor: '#8E806A',
     padding: 10,
     borderRadius: 5,
     width: '45%',
   },
   cancelButton: {
-    backgroundColor: '#A35638', // Cancel button color
+    backgroundColor: '#A35638',
     padding: 10,
     borderRadius: 5,
     width: '45%',
   },
   buttonText: {
-    color: 'white', // Button text color
+    color: 'white',
     textAlign: 'center',
     fontSize: 16,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
   },
 });
 
