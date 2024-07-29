@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker';
-import { teacherOps } from '../components/database';
+import  initializeDatabase  from '../components/database';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
@@ -17,8 +17,22 @@ const TeacherForm = () => {
   const [errors, setErrors] = useState({});
   const [formattedDate, setFormattedDate] = useState(dateOfBirth);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [db, setDb] = useState(null);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const initDatabase = async () => {
+      try {
+        const { teacherOps } = await initializeDatabase();
+        setDb(teacherOps);
+      } catch (error) {
+        console.error('Error initializing database in component:', error);
+      }
+    };
+
+initDatabase();
+  }, []);
 
   const validate = () => {
     let valid = true;
@@ -50,9 +64,6 @@ const TeacherForm = () => {
     if (!dateOfBirth) {
       valid = false;
       errors.dateOfBirth = 'Date of Birth is required';
-    } else if (!/\d{2}-\d{2}-\d{4}/.test(dateOfBirth)) {
-      valid = false;
-      errors.dateOfBirth = 'Date of Birth must be in format DD-MM-YYYY';
     }
 
     if (!selectedGender) {
@@ -67,7 +78,7 @@ const TeacherForm = () => {
   const handleSubmit = async () => {
     if (validate()) {
       try {
-        const newTeacherId = await teacherOps.insert(teacherName, teacherID, email, telephone, dateOfBirth, selectedGender);
+        const newTeacherId = await db.insert(teacherName, teacherID, email, telephone, dateOfBirth, selectedGender);
         Alert.alert('Success', `New teacher added with ID: ${newTeacherId}`);
         // Clear form after successful submission
         setTeacherName('');
