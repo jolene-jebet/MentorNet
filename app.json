@@ -3,6 +3,13 @@
     "name": "MentorNet",
     "slug": "MentorNet",
     "version": "1.0.0",
+    "android": {
+      "package": "com.MentorNet"
+    },
+    "ios": {
+      "bundleIdentifier": "com.MentorNet"
+    }
+
     "plugins": [
       "expo-font"
     ]
