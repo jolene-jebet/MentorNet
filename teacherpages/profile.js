@@ -1,51 +1,95 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
+import PropTypes from 'prop-types';
+import { teacherOps } from '../components/database';
 
-const Profile = () => {
-  const instructorProfile = {
-    name: "Mary Olwal",
-    instructorId: "0215",
-    subject: "Mathematics",
-    email: "mary.olwal@ireporter.com",
-    cellphone: "0712345678",
-    gender: "Female",
-    profileImage: require('assets/images/teacher-medium-dark-skin-tone-svgrepo-com.svg'),
+const TeacherProfile = ({ teacherId }) => {
+  const [teacherProfile, setTeacherProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTeacherProfile = async () => {
+      try {
+        const profile = await teacherOps.getById(teacherId);
+        setTeacherProfile(profile);
+      } catch (error) {
+        console.error('Error fetching teacher profile:', error);
+        setError('Failed to load profile. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+fetchTeacherProfile();
+  }, [teacherId]);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.loadingText}>Loading profile...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!teacherProfile) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>Teacher not found.</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>profile</Text>
+        <Text style={styles.headerText}>Profile</Text>
       </View>
       <View style={styles.profileImageContainer}>
-        <Image source={instructorProfile.profileImage} style={styles.profileImage} />
+        <Image
+          source={teacherProfile.profileImage ? { uri: teacherProfile.profileImage } : require('../assets/images/profile.png')}
+          style={styles.profileImage}
+        />
       </View>
-      <Text style={styles.name}>{instructorProfile.name}</Text>
-      <Text style={styles.id}>{instructorProfile.instructorId}</Text>
+      <Text style={styles.name}>{`${teacherProfile.name} `}</Text>
+  
       <View style={styles.detailsContainer}>
         <Text style={styles.detail}>
-          <Text style={styles.label}>Subject: </Text>
-          {instructorProfile.subject}
-        </Text>
-        <Text style={styles.detail}>
-          <Text style={styles.label}>Instructor ID: </Text>
-          {instructorProfile.instructorId}
+          <Text style={styles.label}>Teacher ID: </Text>
+          {teacherProfile.teacherId}
         </Text>
         <Text style={styles.detail}>
           <Text style={styles.label}>Email: </Text>
-          {instructorProfile.email}
+          {teacherProfile.email}
         </Text>
         <Text style={styles.detail}>
-          <Text style={styles.label}>Cellphone: </Text>
-          {instructorProfile.cellphone}
+          <Text style={styles.label}>Date of Birth: </Text>
+          {formatDate(teacherProfile.dateOfBirth)}
         </Text>
         <Text style={styles.detail}>
           <Text style={styles.label}>Gender: </Text>
-          {instructorProfile.gender}
+          {teacherProfile.selectedGender}
         </Text>
       </View>
     </SafeAreaView>
   );
+};
+
+Profile.propTypes = {
+  teacherId: PropTypes.string.isRequired,
 };
 
 const styles = StyleSheet.create({
@@ -103,6 +147,14 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
   },
+  loadingText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  errorText: {
+    color: '#fff',
+    fontSize: 18,
+  },
 });
 
-export default Profile;
+export default TeacherProfile;

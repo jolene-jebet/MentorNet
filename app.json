@@ -10,8 +10,8 @@
       "bundleIdentifier": "com.MentorNet"
     },
     "plugins": [
-      "expo-asset",
-      "expo-fonts"
+      "expo-asset"
+      
     ]
   }
 }

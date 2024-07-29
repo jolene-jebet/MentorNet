@@ -1,87 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, Alert, Text, StyleSheet, ScrollView, Image, SafeAreaView } from 'react-native';
+// 
+
+//new things 
+
+import React, { useState } from 'react';
+import { View, TextInput, TouchableOpacity, Alert, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { launchImageLibrary } from 'react-native-image-picker';
 import initializeDatabase from '../components/database'; // Adjust the path accordingly
 
 const SchoolForm = () => {
   const [schoolName, setSchoolName] = useState('');
-  const [schoolLogo, setSchoolLogo] = useState(null);
+  const [schoolLogo, setSchoolLogo] = useState("logo");
   const [address, setAddress] = useState('');
   const [telephone, setTelephone] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [missionValues, setMissionValues] = useState('');
   const [errors, setErrors] = useState({});
   const [db, setDb] = useState(null);
 
-  useEffect(() => {
-    const initDatabase = async () => {
-      try {
-        const { schoolOps } = await initializeDatabase();
-        setDb(schoolOps);
-      } catch (error) {
-        console.error('Error initializing database in component:', error);
-      }
-    };
-
-initDatabase();
-  }, []);
+  const initDatabase = async () => {
+    try {
+      const { schoolOps } = await initializeDatabase();
+      setDb(schoolOps);
+    } catch (error) {
+      console.error('Error initializing database in component:', error);
+    }
+  };
 
   const validate = () => {
     let valid = true;
     let errors = {};
 
-if (!schoolName) {
-  valid = false;
-  errors.schoolName = 'School Name is required';
-}
+    if (!schoolName) {
+      valid = false;
+      errors.schoolName = 'School Name is required';
+    }
 
-if (!address) {
-  valid = false;
-  errors.address = 'Address is required';
-}
+    if (!address) {
+      valid = false;
+      errors.address = 'Address is required';
+    }
 
-if (!telephone) {
-  valid = false;
-  errors.telephone = 'Telephone is required';
-}
+    if (!telephone) {
+      valid = false;
+      errors.telephone = 'Telephone is required';
+    }
 
-if (!email) {
-  valid = false;
-  errors.email = 'Email is required';
-} else if (!/\S+@\S+\.\S+/.test(email)) {
-  valid = false;
-  errors.email = 'Email is invalid';
-}
+    if (!email) {
+      valid = false;
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      valid = false;
+      errors.email = 'Email is invalid';
+    }
 
-setErrors(errors);
-return valid;
+    if (!password) {
+      valid = false;
+      errors.password = 'Password is required';
+    }
+
+    setErrors(errors);
+    return valid;
   };
-
-    const handleSelectImage = () => {
-    launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
-      if (response.didCancel) {
-        console.log('User canceled image picker');
-      } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
-      } else {
-        setSchoolLogo(response.assets[0].uri); 
-      }
-    });
-  };
-
 
   const handleSubmit = async () => {
     if (validate()) {
+      if (!db) {
+        await initDatabase();
+      }
       if (db) {
         try {
-          const newSchoolId = await db.insert(schoolName, schoolLogo, address, telephone, email, missionValues);
-          Alert.alert('Success',`New school added with ID: ${newSchoolId}`);
+          const newSchoolId = await db.insert(
+            schoolName,
+            email,
+            password,
+            schoolLogo,
+            address,
+            telephone,
+            missionValues
+          );
+          Alert.alert('Success', `New school added with ID: ${newSchoolId}`);
           setSchoolName('');
           setSchoolLogo(null);
           setAddress('');
           setTelephone('');
           setEmail('');
+          setPassword('');
           setMissionValues('');
         } catch (error) {
           Alert.alert('Error', 'Failed to add school: ' + error.message);
@@ -102,103 +106,120 @@ return valid;
           <Text style={styles.headerText}>School Registration</Text>
         </View>
 
-    <View style={styles.form}>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>School Name:</Text>
-        <View style={styles.inputWithIcon}>
-          <TextInput
-            style={styles.input}
-            value={schoolName}
-            onChangeText={setSchoolName}
-            placeholder="Enter School Name"
-            placeholderTextColor="black"
-          />
-          <Icon name="school" size={20} color="black" style={styles.iconInsideInput} />
+        <View style={styles.form}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>School Name:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={schoolName}
+                onChangeText={setSchoolName}
+                placeholder="Enter School Name"
+                placeholderTextColor="black"
+              />
+              <Icon name="school" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.schoolName && <Text style={styles.errorText}>{errors.schoolName}</Text>}
+          </View>
+
+          {/* Uncomment this block if you want to enable image selection */}
+          {/* <View style={styles.inputContainer}>
+            <Text style={styles.label}>School Logo:</Text>
+            <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
+              {schoolLogo ? (
+                <Image source={{ uri: schoolLogo }} style={styles.image} />
+              ) : (
+                <Text style={styles.imagePlaceholder}>Select Image</Text>
+              )}
+            </TouchableOpacity>
+          </View> */}
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Address:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={address}
+                onChangeText={setAddress}
+                placeholder="Enter Address"
+                placeholderTextColor="black"
+              />
+              <Icon name="location-on" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Telephone:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={telephone}
+                onChangeText={setTelephone}
+                placeholder="Enter Telephone"
+                placeholderTextColor="black"
+                keyboardType="phone-pad"
+              />
+              <Icon name="phone" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter Email"
+                placeholderTextColor="black"
+                keyboardType="email-address"
+              />
+              <Icon name="email" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter Password"
+                placeholderTextColor="black"
+                secureTextEntry={true}
+              />
+              <Icon name="lock" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Mission and Values:</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              value={missionValues}
+              onChangeText={setMissionValues}
+              multiline={true}
+              placeholder="Enter Mission and Values"
+              placeholderTextColor="black"
+            />
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        {errors.schoolName && <Text style={styles.errorText}>{errors.schoolName}</Text>}
-      </View>
-
-      {/* <View style={styles.inputContainer}>
-        <Text style={styles.label}>School Logo:</Text>
-        <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
-          {schoolLogo ? (
-            <Image source={{ uri: schoolLogo }} style={styles.image} />
-          ) : (
-            <Text style={styles.imagePlaceholder}>Select Image</Text>
-          )}
-        </TouchableOpacity>
-      </View> */}
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Address:</Text>
-        <View style={styles.inputWithIcon}>
-          <TextInput
-            style={styles.input}
-            value={address}
-            onChangeText={setAddress}
-            placeholder="Enter Address"
-            placeholderTextColor="black"
-          />
-          <Icon name="location-on" size={20} color="black" style={styles.iconInsideInput} />
-        </View>
-        {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Telephone:</Text>
-        <View style={styles.inputWithIcon}>
-          <TextInput
-            style={styles.input}
-            value={telephone}
-            onChangeText={setTelephone}
-            placeholder="Enter Telephone"
-            placeholderTextColor="black"
-            keyboardType="phone-pad"
-          />
-          <Icon name="phone" size={20} color="black" style={styles.iconInsideInput} />
-        </View>
-        {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email:</Text>
-        <View style={styles.inputWithIcon}>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter Email"
-            placeholderTextColor="black"
-            keyboardType="email-address"
-          />
-          <Icon name="email" size={20} color="black" style={styles.iconInsideInput} />
-        </View>
-        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Mission and Values:</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          value={missionValues}
-          onChangeText={setMissionValues}
-          multiline={true}
-          placeholder="Enter Mission and Values"
-          placeholderTextColor="black"
-        />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.cancelButton}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </ScrollView>
-</SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -280,37 +301,30 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
+    justifyContent: 'space-between',
   },
   submitButton: {
-    backgroundColor: '#8E806A',
+    backgroundColor: 'blue',
     padding: 10,
     borderRadius: 5,
-    width: '45%',
   },
   cancelButton: {
-    backgroundColor: '#A35638',
+    backgroundColor: 'red',
     padding: 10,
     borderRadius: 5,
-    width: '45%',
   },
   buttonText: {
     color: 'white',
     textAlign: 'center',
-    fontSize: 16,
   },
   errorText: {
     color: 'red',
-    fontSize: 12,
     marginTop: 5,
   },
   textArea: {
-    height: 80,
+    height: 100,
     textAlignVertical: 'top',
-    backgroundColor: '#B8A8A2',
   },
 });
 
 export default SchoolForm;
-
