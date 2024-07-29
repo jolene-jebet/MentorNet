@@ -9,5 +9,9 @@
     "ios": {
       "bundleIdentifier": "com.MentorNet"
     }
+
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

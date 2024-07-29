@@ -27,7 +27,11 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+
           <string>com.MentorNet</string>
+
+          <string>com.anonymous.mentornet</string>
+
         </array>
       </dict>
     </array>
