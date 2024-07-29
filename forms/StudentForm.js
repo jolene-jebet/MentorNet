@@ -1,27 +1,29 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { studentOps } from '../components/database';
-
-
+import { useNavigation } from '@react-navigation/native';
 
 const StudentForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState();
+  const [showCalendar, setShowCalendar] = useState(false);
   const [selectedGender, setSelectedGender] = useState('');
   const [errors, setErrors] = useState({});
+  const [formattedDate, setFormattedDate] = useState(dateOfBirth);
 
-  
+  const navigation = useNavigation();
 
   const validate = () => {
     let valid = true;
     let errors = {};
-  
+
     if (!firstName) {
       valid = false;
       errors.firstName = 'First Name is required';
@@ -44,23 +46,26 @@ const StudentForm = () => {
     if (!dateOfBirth) {
       valid = false;
       errors.dateOfBirth = 'Date of Birth is required';
+    } else if (!/\d{2}-\d{2}-\d{4}/.test(dateOfBirth)) {
+      valid = false;
+      errors.dateOfBirth = 'Date of Birth must be in format DD-MM-YYYY';
     }
     if (!selectedGender) {
       valid = false;
       errors.selectedGender = 'Gender is required';
     }
-  
+
     setErrors(errors);
     return valid;
   };
-  
+
   const handleSubmit = async () => {
     if (validate()) {
       try {
-        const newStudentId = await studentOps.insert(firstName, lastName, email, selectedClass, dateOfBirth, selectedGender);
+        const newStudentId = await studentOps.insert(firstName, lastName, email, selectedClass, dateOfBirth.toISOString(), selectedGender);
         Alert.alert('Success', `New student added with ID: ${newStudentId}`);
         // Clear form after successful submission
-        setFirstName(''); 
+        setFirstName('');
         setLastName('');
         setEmail('');
         setSelectedClass('');
@@ -72,13 +77,26 @@ const StudentForm = () => {
     }
   };
 
+  const showDatepicker = () => {
+    setShowCalendar(true);
+  };
+
+  const onDateChange = (selectedDate) => {
+    setShowCalendar(false);
+    setDateOfBirth(selectedDate.toISOString()); // Store date in ISO format for database
+    setFormattedDate(selectedDate.toLocaleDateString()); // Format for display
+  };
+
+  const onCancel = () => {
+    setShowCalendar(false);
+  };
+
   return (
-    <ScrollView>
     <SafeAreaView style={styles.safeContainer}>
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity>
-          <Icon name="arrow-left" type="font-awesome" size={24} color="#fff" />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerText}>Student Registration</Text>
           <TouchableOpacity>
@@ -88,31 +106,47 @@ const StudentForm = () => {
         <View style={styles.form}>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>First Name</Text>
-            <TextInput
-              style={styles.input}
-              value={firstName}
-              onChangeText={setFirstName}
-            />
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={firstName}
+                onChangeText={setFirstName}
+                placeholder="First Name"
+                placeholderTextColor="black"
+              />
+              <Icon name="person" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
             {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Last Name</Text>
-            <TextInput
-              style={styles.input}
-              value={lastName}
-              onChangeText={setLastName}
-            />
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={lastName}
+                onChangeText={setLastName}
+                placeholder="Last Name"
+                placeholderTextColor="black"
+              />
+              <Icon name="person-outline" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
             {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-            />
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Email"
+                placeholderTextColor="black"
+                keyboardType="email-address"
+              />
+              <Icon name="email" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
             {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
           </View>
 
@@ -123,21 +157,29 @@ const StudentForm = () => {
                 selectedValue={selectedClass}
                 onValueChange={(itemValue) => setSelectedClass(itemValue)}
                 style={styles.picker}
+                mode="dropdown"
               >
                 <Picker.Item label="Select Class" value="" />
-                <Picker.Item label="Class 1" value="Class 1" />
-                <Picker.Item label="Class 2" value="Class 2" />
+                <Picker.Item label="Class 6" value="Class 6" />
+                <Picker.Item label="Class 7" value="Class 7" />
+                <Picker.Item label="Class 8" value="Class 8" />
               </Picker>
+              <Icon name="class" size={20} color="black" style={styles.iconInsidePicker} />
             </View>
             {errors.selectedClass && <Text style={styles.errorText}>{errors.selectedClass}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Date of Birth</Text>
-            <TextInput
-              style={styles.input}
-              value={dateOfBirth}
-              onChangeText={setDateOfBirth}
+            <TouchableOpacity onPress={showDatepicker} style={styles.inputWithIcon}>
+              <Text style={styles.datePickerText}>{formattedDate || "Select Date"}</Text>
+              <Icon name="calendar-today" size={20} color="black" style={styles.iconInsideInput} />
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={showCalendar}
+              mode="date"
+              onConfirm={onDateChange}
+              onCancel={onCancel}
             />
             {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth}</Text>}
           </View>
@@ -149,13 +191,15 @@ const StudentForm = () => {
                 selectedValue={selectedGender}
                 onValueChange={(itemValue) => setSelectedGender(itemValue)}
                 style={styles.picker}
+                mode="dropdown"
               >
                 <Picker.Item label="Select Gender" value="" />
                 <Picker.Item label="Male" value="Male" />
                 <Picker.Item label="Female" value="Female" />
               </Picker>
+              <Icon name="wc" size={20} color="black" style={styles.iconInsidePicker} />
             </View>
-            {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
+            {errors.selectedGender && <Text style={styles.errorText}>{errors.selectedGender}</Text>}
           </View>
 
           <View style={styles.buttonContainer}>
@@ -165,13 +209,10 @@ const StudentForm = () => {
             <TouchableOpacity style={styles.cancelButton}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
-            
           </View>
-
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
-    </ScrollView>
   );
 };
 
@@ -229,10 +270,28 @@ const styles = StyleSheet.create({
   iconInsideInput: {
     marginLeft: 10,
   },
+  pickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#B8A8A2',
+    borderRadius: 5,
+    height: 40,
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
   picker: {
     flex: 1,
     height: 40,
     color: 'black',
+  },
+  iconInsidePicker: {
+    marginLeft: 10,
+  },
+  datePickerText: {
+    color: 'black',
+    flex: 1,
+    height: 40,
+    paddingVertical: 10,
   },
   buttonContainer: {
     flexDirection: 'row',

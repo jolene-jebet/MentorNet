@@ -1,10 +1,11 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker';
 import { teacherOps } from '../components/database';
-
+import { useNavigation } from '@react-navigation/native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const TeacherForm = () => {
   const [teacherName, setTeacherName] = useState('');
@@ -14,8 +15,10 @@ const TeacherForm = () => {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [selectedGender, setSelectedGender] = useState('');
   const [errors, setErrors] = useState({});
+  const [formattedDate, setFormattedDate] = useState(dateOfBirth);
+  const [showCalendar, setShowCalendar] = useState(false);
 
- 
+  const navigation = useNavigation();
 
   const validate = () => {
     let valid = true;
@@ -79,11 +82,25 @@ const TeacherForm = () => {
     }
   };
 
+  const showDatepicker = () => {
+    setShowCalendar(true);
+  };
+
+  const onDateChange = (selectedDate) => {
+    setShowCalendar(false);
+    setDateOfBirth(selectedDate.toISOString()); // Store date in ISO format for database
+    setFormattedDate(selectedDate.toLocaleDateString()); // Format for display
+  };
+
+  const onCancel = () => {
+    setShowCalendar(false);
+  };
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={navigation.goBack}>
             <Icon name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerText}>Teacher Registration</Text>
@@ -155,16 +172,16 @@ const TeacherForm = () => {
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Date of Birth</Text>
-            <View style={styles.inputWithIcon}>
-              <TextInput
-                style={styles.input}
-                value={dateOfBirth}
-                onChangeText={setDateOfBirth}
-                placeholder="Date of Birth"
-                placeholderTextColor="black"
-              />
-              <Icon name="cake" size={20} color="black" style={styles.iconInsideInput} />
-            </View>
+            <TouchableOpacity onPress={showDatepicker} style={styles.inputWithIcon}>
+              <Text style={styles.datePickerText}>{formattedDate || "Select Date"}</Text>
+              <Icon name="calendar-today" size={20} color="black" style={styles.iconInsideInput} />
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={showCalendar}
+              mode="date"
+              onConfirm={onDateChange}
+              onCancel={onCancel}
+            />
             {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth}</Text>}
           </View>
 
@@ -285,6 +302,12 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
     marginTop: 5,
+  },
+  datePickerText: {
+    flex: 1,
+    height: 40,
+    color: 'black',
+    paddingVertical: 10,
   },
 });
 

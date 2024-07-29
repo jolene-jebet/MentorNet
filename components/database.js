@@ -1,137 +1,99 @@
-import SQLite from 'react-native-sqlite-storage';
+import * as SQLite from 'expo-sqlite';
 
-console.log('SQLite object:', SQLite);
+const startDatabase = async () => {
+  const db = await SQLite.openDatabaseAsync('SchoolDatabase.db');
 
-enablePromise(true);
+  // Initialize the database schema
+  await db.execAsync(`
+    PRAGMA foreign_keys = ON;
+    CREATE TABLE IF NOT EXISTS Students (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      firstName TEXT NOT NULL,
+      lastName TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      selectedClass TEXT NOT NULL,
+      dateOfBirth TEXT NOT NULL,
+      selectedGender TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS Teachers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      teacherName TEXT NOT NULL,
+      teacherID TEXT UNIQUE NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      telephone TEXT,
+      dateOfBirth TEXT NOT NULL,
+      selectedGender TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS Schools (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      schoolName TEXT NOT NULL,
+      schoolLogo TEXT,
+      address TEXT NOT NULL,
+      telephone TEXT,
+      email TEXT NOT NULL,
+      missionValues TEXT
+    );
+  `);
 
-// Open or create the database
-const db = SQLite.openDatabase(
-  {
-    name: 'SchoolDatabase.db',
-    location: 'default',
-  },
-  () => console.log('Database opened successfully'),
-  error => console.log('Error opening database:', error)
-);
+  // Student operations
+  const studentOps = {
+    insert: async (firstName, lastName, email, selectedClass, dateOfBirth, selectedGender) => {
+      const result = await db.runAsync('INSERT INTO Students (firstName, lastName, email, selectedClass, dateOfBirth, selectedGender) VALUES (?, ?, ?, ?, ?, ?)', firstName, lastName, email, selectedClass, dateOfBirth, selectedGender);
+      return result.lastInsertRowId;
+    },
 
-// Initialize the database schema
-const initDatabase = () => {
-  db.transaction(tx => {
-    // Create Students table
-    tx.executeSql(`CREATE TABLE IF NOT EXISTS Students (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        firstName TEXT NOT NULL,
-        lastName TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        selectedClass TEXT NOT NULL,
-        dateOfBirth TEXT NOT NULL,
-        selectedGender TEXT NOT NULL
-      )`);
+    getAll: async () => {
+      const allRows = await db.getAllAsync('SELECT * FROM Students');
+      return allRows;
+    },
 
-    // Create Teachers table
-    tx.executeSql(`CREATE TABLE IF NOT EXISTS Teachers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        teacherName TEXT NOT NULL,
-        teacherID TEXT UNIQUE NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        telephone TEXT,
-        dateOfBirth TEXT NOT NULL,
-        selectedGender TEXT NOT NULL
-      )`);
+    getFirst: async () => {
+      const firstRow = await db.getFirstAsync('SELECT * FROM Students');
+      return firstRow;
+    },
+  };
 
-    // Create Schools table
-    tx.executeSql(`CREATE TABLE IF NOT EXISTS Schools (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        schoolName TEXT NOT NULL,
-        schoolLogo TEXT,
-        address TEXT NOT NULL,
-        telephone TEXT,
-        email TEXT NOT NULL,
-        missionValues TEXT
-      )`);
-  }, error => console.log('Transaction error:', error));
+  // Teacher operations
+  const teacherOps = {
+    insert: async (teacherName, teacherID, email, telephone, dateOfBirth, selectedGender) => {
+      const result = await db.runAsync('INSERT INTO Teachers (teacherName, teacherID, email, telephone, dateOfBirth, selectedGender) VALUES (?, ?, ?, ?, ?, ?)', teacherName, teacherID, email, telephone, dateOfBirth, selectedGender);
+      return result.lastInsertRowId;
+    },
+
+    getAll: async () => {
+      const allRows = await db.getAllAsync('SELECT * FROM Teachers');
+      return allRows;
+    },
+
+    getFirst: async () => {
+      const firstRow = await db.getFirstAsync('SELECT * FROM Teachers');
+      return firstRow;
+    },
+  };
+
+  // School operations
+  const schoolOps = {
+    insert: async (schoolName, schoolLogo, address, telephone, email, missionValues) => {
+      const result = await db.runAsync('INSERT INTO Schools (schoolName, schoolLogo, address, telephone, email, missionValues) VALUES (?, ?, ?, ?, ?, ?)', schoolName, schoolLogo, address, telephone, email, missionValues);
+      return result.lastInsertRowId;
+    },
+
+    getAll: async () => {
+      const allRows = await db.getAllAsync('SELECT * FROM Schools');
+      return allRows;
+    },
+
+    getFirst: async () => {
+      const firstRow = await db.getFirstAsync('SELECT * FROM Schools');
+      return firstRow;
+    },
+  };
+
+  // Export the database operations
+  return { studentOps, teacherOps, schoolOps };
 };
 
-// Student operations
-const studentOps = {
-    insert: (firstName, lastName, email, selectedClass, dateOfBirth, selectedGender) => {
-        return new Promise((resolve, reject) => {
-          db.transaction(tx => {
-            tx.executeSql(
-              'INSERT INTO Students (firstName, lastName, email, selectedClass, dateOfBirth, selectedGender) VALUES (?, ?, ?, ?, ?, ?)',
-              [firstName, lastName, email, selectedClass, dateOfBirth, selectedGender],
-              (tx, result) => resolve(result.insertId),
-              (tx, error) => reject(error)
-            );
-          });
-        });
-      },
-
-  getAll: () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM Students',
-          [],
-          (_, { rows }) => resolve(rows.raw()),
-          (_, error) => reject(error)
-        );
-      });
-    });
-  },
-
-  // ... other student operations ...
-};
-
-// Teacher operations
-const teacherOps = {
-  insert: (teacherName, teacherID, email, phone, dateOfBirth, selectedGender) => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'INSERT INTO Teachers (teacherName, teacherID, email, telephone, dateOfBirth, selectedGender) VALUES (?, ?, ?, ?, ?, ?)',
-          [teacherName, teacherID, email, phone, dateOfBirth, selectedGender],
-          (_, result) => resolve(result.insertId),
-          (_, error) => reject(error)
-        );
-      });
-    });
-  },
-
-  getAll: () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM Teachers',
-          [],
-          (_, { rows }) => resolve(rows.raw()),
-          (_, error) => reject(error)
-        );
-      });
-    });
-  },
-
-  // ... other teacher operations ...
-};
-
-// School operations
-const schoolOps = {
-  insert: (schoolName, schoolLogo, address, telephone, email, missionValues) => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'INSERT INTO Schools (schoolName, schoolLogo, address, telephone, email, missionValues) VALUES (?, ?, ?, ?, ?, ?)',
-          [schoolName, schoolLogo, address, ptelephone, email, missionValues],
-          (_, result) => resolve(result.insertId),
-          (_, error) => reject(error)
-        );
-      });
-    });
-  }
-};
-
-// Initialize the database
-initDatabase();
-
-// Export the database operations
-export { studentOps, teacherOps, schoolOps };
+// Call the async function
+startDatabase().then(({ studentOps, teacherOps, schoolOps }) => {
+  // Use the exported operations here
+});

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Alert, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, Alert, Text, StyleSheet, ScrollView, Image, SafeAreaView } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
-import {schoolOps} from '../components/database';
+import { schoolOps } from '../components/database';
+import { useNavigation } from '@react-navigation/native';
+
 const SchoolForm = () => {
   const [schoolName, setSchoolName] = useState('');
   const [schoolLogo, setSchoolLogo] = useState(null);
@@ -10,6 +13,8 @@ const SchoolForm = () => {
   const [email, setEmail] = useState('');
   const [missionValues, setMissionValues] = useState('');
   const [errors, setErrors] = useState({});
+
+  const navigation = useNavigation();
 
   const validate = () => {
     let valid = true;
@@ -73,127 +78,143 @@ const SchoolForm = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Image source={require('../assets/images/sch.png')} style={styles.icon} />
-        <View style={styles.headerTextContainer}>
-          <Text style={styles.headerText}>Welcome!</Text>
-          <Text style={styles.headerSubText}>Register your school with us today</Text>
-        </View>
-      </View>
-
-      <View style={styles.form}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>School Name:</Text>
-          <TextInput
-            style={styles.input}
-            value={schoolName}
-            onChangeText={setSchoolName}
-            placeholder="Enter School Name"
-          />
-          {errors.schoolName && <Text style={styles.errorText}>{errors.schoolName}</Text>}
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>School Logo:</Text>
-          <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
-            {schoolLogo ? (
-              <Image source={{ uri: schoolLogo }} style={styles.image} />
-            ) : (
-              <Text style={styles.imagePlaceholder}>Select Image</Text>
-            )}
+    <SafeAreaView style={styles.safeContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={navigation.goBack}>
+            <Icon name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
+          <Text style={styles.headerText}>School Registration</Text>
+          <Image source={require('../assets/images/sch.png')} style={styles.icon} />
         </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Address:</Text>
-          <TextInput
-            style={styles.input}
-            value={address}
-            onChangeText={setAddress}
-            placeholder="Enter Address"
-          />
-          {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
-        </View>
+        <View style={styles.form}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>School Name:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={schoolName}
+                onChangeText={setSchoolName}
+                placeholder="Enter School Name"
+                placeholderTextColor="black"
+              />
+              <Icon name="school" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.schoolName && <Text style={styles.errorText}>{errors.schoolName}</Text>}
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Telephone:</Text>
-          <TextInput
-            style={styles.input}
-            value={telephone}
-            onChangeText={setTelephone}
-            placeholder="Enter Telephone"
-            keyboardType="phone-pad"
-          />
-          {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
-        </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>School Logo:</Text>
+            <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
+              {schoolLogo ? (
+                <Image source={{ uri: schoolLogo }} style={styles.image} />
+              ) : (
+                <Text style={styles.imagePlaceholder}>Select Image</Text>
+              )}
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email:</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter Email"
-            keyboardType="email-address"
-          />
-          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-        </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Address:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={address}
+                onChangeText={setAddress}
+                placeholder="Enter Address"
+                placeholderTextColor="black"
+              />
+              <Icon name="location-on" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
+          </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Mission and Values:</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            value={missionValues}
-            onChangeText={setMissionValues}
-            multiline={true}
-            placeholder="Enter Mission and Values"
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Telephone:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={telephone}
+                onChangeText={setTelephone}
+                placeholder="Enter Telephone"
+                placeholderTextColor="black"
+                keyboardType="phone-pad"
+              />
+              <Icon name="phone" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
+          </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-            <Text style={styles.buttonText}>Submit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email:</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter Email"
+                placeholderTextColor="black"
+                keyboardType="email-address"
+              />
+              <Icon name="email" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Mission and Values:</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              value={missionValues}
+              onChangeText={setMissionValues}
+              multiline={true}
+              placeholder="Enter Mission and Values"
+              placeholderTextColor="black"
+            />
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
   container: {
     flexGrow: 1,
     padding: 20,
     backgroundColor: 'black',
   },
   header: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 20,
-  },
-  icon: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
-  },
-  headerTextContainer: {
-    alignItems: 'center',
+    marginTop: 40,
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 18,
     color: 'white',
-    textAlign: 'center',
   },
-  headerSubText: {
-    fontSize: 16,
-    color: 'white',
-    textAlign: 'center',
+  icon: {
+    width: 24,
+    height: 24,
   },
   form: {
-    backgroundColor: '#403432',
+    backgroundColor: '#4E4037',
     padding: 20,
     borderRadius: 10,
   },
@@ -205,15 +226,26 @@ const styles = StyleSheet.create({
     color: 'white',
     marginBottom: 5,
   },
-  input: {
-    height: 40,
+  inputWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#B8A8A2',
-    color: 'black',
-    padding: 10,
     borderRadius: 5,
+    paddingHorizontal: 10,
   },
-  textArea: {
-    height: 80,
+  input: {
+    flex: 1,
+    height: 40,
+    color: 'black',
+    paddingVertical: 10,
+  },
+  iconInsideInput: {
+    marginLeft: 10,
+  },
+  picker: {
+    flex: 1,
+    height: 40,
+    color: 'black',
   },
   imagePicker: {
     height: 150,
@@ -258,6 +290,11 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
     marginTop: 5,
+  },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
+    backgroundColor: '#B8A8A2',
   },
 });
 
