@@ -1,24 +1,38 @@
-import React, { useState } from 'react';
+
+import React, { useState,useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { studentOps } from '../components/database';
 import { useNavigation } from '@react-navigation/native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import  initializeDatabase  from '../components/database';
 
 const StudentForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState();
+  const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedGender, setSelectedGender] = useState('');
   const [errors, setErrors] = useState({});
   const [formattedDate, setFormattedDate] = useState(dateOfBirth);
+  const [db, setDb] = useState(null);
 
   const navigation = useNavigation();
+  useEffect(() => {
+    const initDatabase = async () => {
+      try {
+        const {studentOps } = await initializeDatabase();
+        setDb(studentOps);
+      } catch (error) {
+        console.error('Error initializing database in component:', error);
+      }
+    };
+
+initDatabase();
+  }, []);
 
   const validate = () => {
     let valid = true;
@@ -46,9 +60,6 @@ const StudentForm = () => {
     if (!dateOfBirth) {
       valid = false;
       errors.dateOfBirth = 'Date of Birth is required';
-    } else if (!/\d{2}-\d{2}-\d{4}/.test(dateOfBirth)) {
-      valid = false;
-      errors.dateOfBirth = 'Date of Birth must be in format DD-MM-YYYY';
     }
     if (!selectedGender) {
       valid = false;
@@ -61,21 +72,25 @@ const StudentForm = () => {
 
   const handleSubmit = async () => {
     if (validate()) {
-      try {
-        const newStudentId = await studentOps.insert(firstName, lastName, email, selectedClass, dateOfBirth.toISOString(), selectedGender);
-        Alert.alert('Success', `New student added with ID: ${newStudentId}`);
-        // Clear form after successful submission
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setSelectedClass('');
-        setDateOfBirth('');
-        setSelectedGender('');
-      } catch (error) {
-        Alert.alert('Error', 'Failed to add student: ' + error.message);
-      }
+      if(db){
+    try {
+     const newStudentId = await db.insert(firstName, lastName, email, selectedClass, dateOfBirth, selectedGender);
+    
+      Alert.alert('Success', `New student added with ID: ${newStudentId}`);
+      // Clear form after successful submission
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setSelectedClass('');
+      setDateOfBirth('');
+      setSelectedGender('');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to add student: ' + error);
     }
-  };
+  }else{
+    Alert.alert('Error', 'Database is not initialized.');
+  }}
+};
 
   const showDatepicker = () => {
     setShowCalendar(true);
@@ -83,8 +98,8 @@ const StudentForm = () => {
 
   const onDateChange = (selectedDate) => {
     setShowCalendar(false);
-    setDateOfBirth(selectedDate.toISOString()); // Store date in ISO format for database
-    setFormattedDate(selectedDate.toLocaleDateString()); // Format for display
+    setDateOfBirth(selectedDate.toISOString());
+    setFormattedDate(selectedDate.toLocaleDateString());
   };
 
   const onCancel = () => {
@@ -155,7 +170,7 @@ const StudentForm = () => {
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={selectedClass}
-                onValueChange={(itemValue) => setSelectedClass(itemValue)}
+                onValueChange={setSelectedClass}
                 style={styles.picker}
                 mode="dropdown"
               >
@@ -170,26 +185,11 @@ const StudentForm = () => {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Date of Birth</Text>
-            <TouchableOpacity onPress={showDatepicker} style={styles.inputWithIcon}>
-              <Text style={styles.datePickerText}>{formattedDate || "Select Date"}</Text>
-              <Icon name="calendar-today" size={20} color="black" style={styles.iconInsideInput} />
-            </TouchableOpacity>
-            <DateTimePickerModal
-              isVisible={showCalendar}
-              mode="date"
-              onConfirm={onDateChange}
-              onCancel={onCancel}
-            />
-            {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth}</Text>}
-          </View>
-
-          <View style={styles.inputContainer}>
             <Text style={styles.label}>Gender</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={selectedGender}
-                onValueChange={(itemValue) => setSelectedGender(itemValue)}
+                onValueChange={setSelectedGender}
                 style={styles.picker}
                 mode="dropdown"
               >
@@ -202,11 +202,26 @@ const StudentForm = () => {
             {errors.selectedGender && <Text style={styles.errorText}>{errors.selectedGender}</Text>}
           </View>
 
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Date of Birth</Text>
+            <TouchableOpacity onPress={showDatepicker} style={styles.inputWithIcon}>
+              <Text style={styles.datePickerText}>{formattedDate}</Text>
+              <Icon name="calendar-today" size={20} color="black" style={styles.iconInsideInput} />
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={showCalendar}
+              mode="date"
+              onConfirm={onDateChange}
+              onCancel={onCancel}
+            />
+            {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth}</Text>}
+          </View>
+
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.cancelButton}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
@@ -215,6 +230,7 @@ const StudentForm = () => {
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   safeContainer: {
