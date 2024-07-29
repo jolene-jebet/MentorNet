@@ -1,51 +1,95 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
+import PropTypes from 'prop-types';
+import { studentOps } from '../source/database';
 
-const Profile = () => {
-  const studentProfile = {
-    name: "Nelly Waiganjo",
-    studentId: "191232",
-    class: "7 WEST",
-    email: "nelly.waiganjo@ireporter.com",
-    gender: "Female",
-    classTeacher: "Ms Olwal M",
-    profileImage: require(''),
+const Profile = ({ studentId }) => {
+  const [studentProfile, setStudentProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStudentProfile = async () => {
+      try {
+        const profile = await studentOps.getById(studentId);
+        setStudentProfile(profile);
+      } catch (error) {
+        console.error('Error fetching student profile:', error);
+        setError('Failed to load profile. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudentProfile();
+  }, [studentId]);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.loadingText}>Loading profile...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!studentProfile) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>Student not found.</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>profile</Text>
+        <Text style={styles.headerText}>Profile</Text>
       </View>
       <View style={styles.profileImageContainer}>
-        <Image source={studentProfile.profileImage} style={styles.profileImage} />
+        <Image
+          source={studentProfile.profileImage ? { uri: studentProfile.profileImage } : require('../assets/images/exam-svgrepo-com.svg')}
+          style={styles.profileImage}
+        />
       </View>
-      <Text style={styles.name}>{studentProfile.name}</Text>
-      <Text style={styles.id}>{studentProfile.studentId}</Text>
+      <Text style={styles.name}>{`${studentProfile.firstName} ${studentProfile.lastName}`}</Text>
+      <Text style={styles.id}>{studentProfile.id}</Text>
       <View style={styles.detailsContainer}>
         <Text style={styles.detail}>
           <Text style={styles.label}>Class: </Text>
-          {studentProfile.class}
+          {studentProfile.selectedClass}
         </Text>
         <Text style={styles.detail}>
           <Text style={styles.label}>Email: </Text>
           {studentProfile.email}
         </Text>
         <Text style={styles.detail}>
-          <Text style={styles.label}>Student ID: </Text>
-          {studentProfile.studentId}
+          <Text style={styles.label}>Date of Birth: </Text>
+          {formatDate(studentProfile.dateOfBirth)}
         </Text>
         <Text style={styles.detail}>
           <Text style={styles.label}>Gender: </Text>
-          {studentProfile.gender}
-        </Text>
-        <Text style={styles.detail}>
-          <Text style={styles.label}>Class teacher: </Text>
-          {studentProfile.classTeacher}
+          {studentProfile.selectedGender}
         </Text>
       </View>
     </SafeAreaView>
   );
+};
+
+Profile.propTypes = {
+  studentId: PropTypes.string.isRequired,
 };
 
 const styles = StyleSheet.create({
@@ -102,6 +146,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
+  },
+  loadingText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  errorText: {
+    color: '#fff',
+    fontSize: 18,
   },
 });
 
