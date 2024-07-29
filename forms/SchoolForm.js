@@ -1,8 +1,4 @@
-// 
-
-//new things 
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, TouchableOpacity, Alert, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import initializeDatabase from '../components/database'; // Adjust the path accordingly
@@ -18,14 +14,19 @@ const SchoolForm = () => {
   const [errors, setErrors] = useState({});
   const [db, setDb] = useState(null);
 
-  const initDatabase = async () => {
-    try {
-      const { schoolOps } = await initializeDatabase();
-      setDb(schoolOps);
-    } catch (error) {
-      console.error('Error initializing database in component:', error);
-    }
-  };
+  useEffect(() => {
+    const initDatabase = async () => {
+      try {
+        const { schoolOps } = await initializeDatabase();
+        setDb(schoolOps);
+      } catch (error) {
+        console.error('Error initializing database in component:', error);
+        Alert.alert('Error', 'Failed to initialize database: ' + error.message);
+      }
+    };
+
+    initDatabase();
+  }, []); // Run this only once when the component mounts
 
   const validate = () => {
     let valid = true;
@@ -65,9 +66,6 @@ const SchoolForm = () => {
 
   const handleSubmit = async () => {
     if (validate()) {
-      if (!db) {
-        await initDatabase();
-      }
       if (db) {
         try {
           const newSchoolId = await db.insert(
@@ -121,18 +119,6 @@ const SchoolForm = () => {
             </View>
             {errors.schoolName && <Text style={styles.errorText}>{errors.schoolName}</Text>}
           </View>
-
-          {/* Uncomment this block if you want to enable image selection */}
-          {/* <View style={styles.inputContainer}>
-            <Text style={styles.label}>School Logo:</Text>
-            <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
-              {schoolLogo ? (
-                <Image source={{ uri: schoolLogo }} style={styles.image} />
-              ) : (
-                <Text style={styles.imagePlaceholder}>Select Image</Text>
-              )}
-            </TouchableOpacity>
-          </View> */}
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Address:</Text>
@@ -276,28 +262,6 @@ const styles = StyleSheet.create({
   },
   iconInsideInput: {
     marginLeft: 10,
-  },
-  picker: {
-    flex: 1,
-    height: 40,
-    color: 'black',
-  },
-  imagePicker: {
-    height: 150,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#B8A8A2',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 5,
-  },
-  imagePlaceholder: {
-    color: 'gray',
   },
   buttonContainer: {
     flexDirection: 'row',

@@ -73,7 +73,7 @@ fetchSchoolProfile();
         </Text>
         <Text style={styles.detail}>
           <Text style={styles.label}>Telephone: </Text>
-          {formatDate(schoolProfile.telephone)}
+          {(schoolProfile.telephone)}
         </Text>
         
       </View>
@@ -81,7 +81,7 @@ fetchSchoolProfile();
   );
 };
 
-Profile.propTypes = {
+SchoolProfile.propTypes = {
   schoolId: PropTypes.string.isRequired,
 };
 

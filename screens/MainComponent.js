@@ -14,7 +14,9 @@ import OwnerLanding from '../landingpages/OwnerLanding';
 import Profile from '../studentpages/profile';
 import TeacherProfile from '../teacherpages/profile';
 import SchoolProfile from '../ownerpages/profile';
-
+import SchoolForm from '../forms/SchoolForm';
+import TeacherForm from '../forms/TeacherForm';
+import StudentForm from '../forms/StudentForm';
 // Create a stack navigator
 const Stack = createStackNavigator();
 
@@ -31,7 +33,8 @@ const screenOptions = {
 // Home Navigator component
 const HomeNavigator = () => {
     return (
-        <Stack.Navigator screenOptions={screenOptions}>
+        <Stack.Navigator screenOptions={screenOptions} initialRouteName='Homescreen'>
+            
             <Stack.Screen
                 name='HomeScreen'
                 component={HomeScreen}
@@ -67,6 +70,18 @@ const HomeNavigator = () => {
                 name='SchoolProfile'
                 component={SchoolProfile}
             />
+            <Stack.Screen
+            name='SchoolForm'
+            component={SchoolForm}/>
+
+            <Stack.Screen
+                name='StudentForm'
+                component={StudentForm}/>
+
+                <Stack.Screen
+                name='TeacherForm'
+                component={TeacherForm}/>
+
             <Stack.Screen
                 name='ChatRoom'
                 component={ChatRoom}

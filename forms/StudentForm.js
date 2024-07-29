@@ -115,7 +115,7 @@ initDatabase();
           </TouchableOpacity>
           <Text style={styles.headerText}>Student Registration</Text>
           <TouchableOpacity>
-            <Image source={require('../assets/images/user.png')} style={styles.icon} />
+            {/* <Image source={require('../assets/images/user.png')} style={styles.icon} /> */}
           </TouchableOpacity>
         </View>
         <View style={styles.form}>

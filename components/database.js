@@ -1,162 +1,9 @@
-
-
-// import * as SQLite from 'expo-sqlite';
-
-// const initializeDatabase = async () => {
-//   try {
-//     const db = await SQLite.openDatabaseAsync('SchoolDatabase.db');
-
-// // Initialize the database schema
-// await db.execAsync(`
-//   PRAGMA foreign_keys = ON;
-//   CREATE TABLE IF NOT EXISTS Students (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     firstName TEXT NOT NULL,
-//     lastName TEXT NOT NULL,
-//     email TEXT UNIQUE NOT NULL,
-//     selectedClass TEXT NOT NULL,
-//     dateOfBirth TEXT NOT NULL,
-//      role TEXT DEFAULT 'student' NOT NULL,
-//     selectedGender TEXT NOT NULL
-//   );
-//   CREATE TABLE IF NOT EXISTS Teachers (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     teacherName TEXT NOT NULL,
-//     teacherID TEXT UNIQUE NOT NULL,
-//     email TEXT UNIQUE NOT NULL,
-//     telephone TEXT,
-//     dateOfBirth TEXT NOT NULL,
-//     selectedGender TEXT NOT NULL
-//   );
-//   CREATE TABLE IF NOT EXISTS Schools (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     schoolName TEXT NOT NULL,
-//     schoolLogo TEXT,
-//     address TEXT NOT NULL,
-//     role TEXT NOT NULL,
-//     telephone TEXT,
-//     email TEXT NOT NULL,
-//     missionValues TEXT
-//   );
-// `);
-
-// // Student operations
-// const studentOps = {
-//   insert: async (firstName, lastName, email, selectedClass, dateOfBirth, selectedGender) => {
-//     try {
-//       const result = await db.runAsync('INSERT INTO Students (firstName, lastName, email, selectedClass, dateOfBirth, selectedGender) VALUES (?, ?, ?, ?, ?, ?)', [firstName, lastName, email, selectedClass, dateOfBirth, selectedGender]);
-//       return result.lastInsertRowId;
-//     } catch (error) {
-//       console.error('Error inserting student:', error);
-//       throw error;
-//     }
-//   },
-
-//   getAll: async () => {
-//     try {
-//       const allRows = await db.getAllAsync('SELECT * FROM Students');
-//       return allRows;
-//     } catch (error) {
-//       console.error('Error getting all students:', error);
-//       throw error;
-//     }
-//   },
-
-//   getFirst: async () => {
-//     try {
-//       const firstRow = await db.getFirstAsync('SELECT * FROM Students');
-//       return firstRow;
-//     } catch (error) {
-//       console.error('Error getting first student:', error);
-//       throw error;
-//     }
-//   },
-// };
-
-// // Teacher operations
-// const teacherOps = {
-//   insert: async (teacherName, teacherID, email, telephone, dateOfBirth, selectedGender) => {
-//     try {
-//       const result = await db.runAsync('INSERT INTO Teachers (teacherName, teacherID, email, telephone, dateOfBirth, selectedGender) VALUES (?, ?, ?, ?, ?, ?)', [teacherName, teacherID, email, telephone, dateOfBirth, selectedGender]);
-//       return result.lastInsertRowId;
-//     } catch (error) {
-//       console.error('Error inserting teacher:', error);
-//       throw error;
-//     }
-//   },
-
-//   getAll: async () => {
-//     try {
-//       const allRows = await db.getAllAsync('SELECT * FROM Teachers');
-//       return allRows;
-//     } catch (error) {
-//       console.error('Error getting all teachers:', error);
-//       throw error;
-//     }
-//   },
-
-//   getFirst: async () => {
-//     try {
-//       const firstRow = await db.getFirstAsync('SELECT * FROM Teachers');
-//       return firstRow;
-//     } catch (error) {
-//       console.error('Error getting first teacher:', error);
-//       throw error;
-//     }
-//   },
-// };
-
-// // School operations
-// const schoolOps = {
-//   insert: async (schoolName, schoolLogo, address, telephone, email, missionValues) => {
-//     try {
-//       const result = await db.runAsync('INSERT INTO Schools (schoolName, schoolLogo, address, telephone, email, missionValues) VALUES (?, ?, ?, ?, ?, ?)', [schoolName, schoolLogo, address, telephone, email, missionValues]);
-//       return result.lastInsertRowId;
-//     } catch (error) {
-//       console.error('Error inserting school:', error);
-//       throw error;
-//     }
-//   },
-
-//   getAll: async () => {
-//     try {
-//       const allRows = await db.getAllAsync('SELECT * FROM Schools');
-//       return allRows;
-//     } catch (error) {
-//       console.error('Error getting all schools:', error);
-//       throw error;
-//     }
-//   },
-
-//   getFirst: async () => {
-//     try {
-//       const firstRow = await db.getFirstAsync('SELECT * FROM Schools');
-//       return firstRow;
-//     } catch (error) {
-//       console.error('Error getting first school:', error);
-//       throw error;
-//     }
-//   },
-// };
-
-// return { studentOps, teacherOps, schoolOps };
-//   } catch (error) {
-//     console.error('Error initializing database:', error);
-//     throw error;
-//   }
-// };
-
-// export default initializeDatabase;
-
-
-//Fresh code
-
 import * as SQLite from 'expo-sqlite';
 
 const initializeDatabase = async () => {
   try {
     const db = await SQLite.openDatabaseAsync('SchoolDatabase.db');
-
+    
     // Initialize the database schema
     await db.execAsync(`
       PRAGMA foreign_keys = ON;
@@ -167,7 +14,7 @@ const initializeDatabase = async () => {
         password TEXT NOT NULL
       );
       CREATE TABLE IF NOT EXISTS Students (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId INTEGER NOT NULL,
         firstName TEXT NOT NULL,
         lastName TEXT NOT NULL,
@@ -177,7 +24,7 @@ const initializeDatabase = async () => {
         FOREIGN KEY (userId) REFERENCES User(id)
       );
       CREATE TABLE IF NOT EXISTS Teachers (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId INTEGER NOT NULL,
         teacherName TEXT NOT NULL,
         teacherID TEXT UNIQUE NOT NULL,
@@ -187,7 +34,7 @@ const initializeDatabase = async () => {
         FOREIGN KEY (userId) REFERENCES User(id)
       );
       CREATE TABLE IF NOT EXISTS Schools (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId INTEGER NOT NULL,
         schoolName TEXT NOT NULL,
         schoolLogo TEXT,
@@ -212,6 +59,19 @@ const initializeDatabase = async () => {
           throw error;
         }
       },
+
+      login: async (email, password) => {
+        try {
+          const result = await db.getFirstAsync(
+            'SELECT * FROM User WHERE email = ? AND password = ?',
+            [email, password]
+          );
+          return result;
+        } catch (error) {
+          console.error('Error logging in:', error);
+          throw error;
+        }
+      },
     };
 
     // School operations
@@ -223,8 +83,8 @@ const initializeDatabase = async () => {
 
           // Insert into Schools table with the generated userId
           const result = await db.runAsync(
-            'INSERT INTO Schools (id, userId, schoolName, schoolLogo, address, telephone, missionValues) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [userId, userId, schoolName, schoolLogo, address, telephone, missionValues]
+            'INSERT INTO Schools (userId, schoolName, schoolLogo, address, telephone, missionValues) VALUES (?, ?, ?, ?, ?, ?)',
+            [userId, schoolName, schoolLogo, address, telephone, missionValues]
           );
           return result.lastInsertRowId;
         } catch (error) {

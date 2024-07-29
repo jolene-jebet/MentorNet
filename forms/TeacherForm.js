@@ -115,7 +115,7 @@ initDatabase();
             <Icon name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerText}>Teacher Registration</Text>
-          <Image source={require('../assets/images/user.png')} style={styles.icon} />
+          {/* <Image source={require('../assets/images/user.png')} style={styles.icon} /> */}
         </View>
 
         <View style={styles.form}>

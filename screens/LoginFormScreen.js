@@ -1,21 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import initializeDatabase from '../components/database'; // Adjust the path to your initializeDatabase module
 
 const LoginFormScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
 
-
-    const handleLogin = () => {
+    const handleLogin = async () => {
         console.log(`Logging in with email: ${email} and password: ${password}`);
+        try {
+            const { userOps } = await initializeDatabase();
+            const userData = await userOps.login(email, password);
+            if (userData) {
+                console.log('Login successful:', userData);
+                // Navigate to the appropriate screen based on user role
+                if (userData.role === 'admin') {
+                    navigation.navigate('OwnerLanding');
+                } else if (userData.role === 'teacher') {
+                    navigation.navigate('TeacherLanding');
+                } else if (userData.role === 'student') {
+                    navigation.navigate('StudentLanding');
+                }
+            } else {
+                Alert.alert('Login Failed', 'Invalid email or password');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            Alert.alert('Login Error', 'An error occurred during login. Please try again.');
+        }
         setEmail('');
         setPassword('');
     };
 
     const handleSignup = () => {
-        navigation.navigate('SignUpScreen');
+        navigation.navigate('SchoolForm');
     }
 
     return (

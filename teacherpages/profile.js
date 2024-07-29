@@ -88,7 +88,7 @@ fetchTeacherProfile();
   );
 };
 
-Profile.propTypes = {
+TeacherProfile.propTypes = {
   teacherId: PropTypes.string.isRequired,
 };
 
