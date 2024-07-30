@@ -2,29 +2,54 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 import PropTypes from 'prop-types';
 import { schoolOps } from '../components/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import initializeDatabase from '../components/database';
 
 const SchoolProfile = ({ schoolId }) => {
   const [schoolProfile, setSchoolProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  
 
-  useEffect(() => {
-    const fetchSchoolProfile = async () => {
-      try {
-        const profile = await schoolOps.getByEmail(email);
-        setSchoolProfile(profile);
-      } catch (error) {
-        console.error('Error fetching school profile:', error);
-        setError('Failed to load profile. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
+  const [uuserId, setUserId] = useState(null);
+    const [schoolData, setSchoolData] = useState(null);
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const id = await AsyncStorage.getItem('userId');
+                if (id !== null) {
+                    setUserId(id);
+                    await fetchSchoolData(id); // Fetch school data using user ID
+                } else {
+                    console.log('No user ID found');
+                }
+            } catch (error) {
+                console.error('Error retrieving user ID from AsyncStorage:', error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
+
+    const fetchSchoolData = async (userId) => {
+        try {
+            const { schoolOps } = await initializeDatabase();
+            // if (!userId) {
+            //     console.log('No user ID provided');
+            //     return;
+            // }
+            const schoolInfo = await schoolOps.getById(userId); // Assuming you want to fetch school by userId
+            if (schoolInfo) {
+                setSchoolData(schoolInfo);
+                console.log('School data:', schoolInfo);
+            } else {
+                console.log('No school data found for this user ID');
+            }
+        } catch (error) {
+            console.error('Error fetching school data:', error);
+        }
     };
 
-fetchSchoolProfile();
-  }, [schoolId]);
 
-  if (loading) {
+  if (!schoolData) {
     return (
       <SafeAreaView style={styles.container}>
         <Text style={styles.loadingText}>Loading profile...</Text>
@@ -32,21 +57,8 @@ fetchSchoolProfile();
     );
   }
 
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>{error}</Text>
-      </SafeAreaView>
-    );
-  }
-
-  if (!schoolProfile) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>School not found.</Text>
-      </SafeAreaView>
-    );
-  }
+  
+  
 
  
   return (
@@ -56,24 +68,24 @@ fetchSchoolProfile();
       </View>
       <View style={styles.profileImageContainer}>
         <Image
-          source={schoolProfile.profileImage ? { uri: schoolProfile.profileImage } : require('../assets/images/profile.png')}
+          source={require('../assets/images/profile.png')}
           style={styles.profileImage}
         />
       </View>
-      <Text style={styles.name}>{`${schoolProfile.schoolName}`}</Text>
+      <Text style={styles.name}>{`${schoolData?.schoolName}`}</Text>
       
       <View style={styles.detailsContainer}>
         <Text style={styles.detail}>
           <Text style={styles.label}>Address: </Text>
-          {schoolProfile.address}
+          {schoolData?.address}
         </Text>
         <Text style={styles.detail}>
-          <Text style={styles.label}>Email: </Text>
-          {schoolProfile.email}
+          <Text style={styles.label}>Mission: </Text>
+          {schoolData?.missionValues}
         </Text>
         <Text style={styles.detail}>
           <Text style={styles.label}>Telephone: </Text>
-          {(schoolProfile.telephone)}
+          {(schoolData?.telephone)}
         </Text>
         
       </View>
