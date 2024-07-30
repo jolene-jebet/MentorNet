@@ -88,6 +88,18 @@ const teacherOps = {
       throw error;
     }
   },
+  getById: async (userId) => {
+    try {
+      const result = await db.getFirstAsync(
+        'SELECT teacherName, teacherID, telephone, dateOfBirth, selectedGender FROM Teachers WHERE userId = ?',
+        [userId]
+      );
+      return result;
+    } catch (error) {
+      console.error('Error retrieving teacher by userId:', error);
+      throw error;
+    }
+  }
 };
 
     // School operations

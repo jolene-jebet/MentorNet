@@ -1,6 +1,8 @@
-import React from "react";
+import React, {useState,useEffect} from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from "react-native";
 import { Card, Text } from "react-native-elements";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import initializeDatabase from '../components/database';
 
 import { useNavigation } from "@react-navigation/native";
 // Get screen dimensions
@@ -10,6 +12,44 @@ const cardWidth = width * 0.44;
 const cardHeight = height * 0.25;
 
 const TeacherLanding = () => {
+    const [uuserId, setUserId] = useState(null);
+    const [teacherData, setteacherData] = useState(null);
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const id = await AsyncStorage.getItem('userId');
+                if (id !== null) {
+                    setUserId(id);
+                    await fetchSchoolData(id); // Fetch school data using user ID
+                } else {
+                    console.log('No user ID found');
+                }
+            } catch (error) {
+                console.error('Error retrieving user ID from AsyncStorage:', error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
+
+    const fetchSchoolData = async (userId) => {
+        try {
+            const { teacherOps } = await initializeDatabase();
+            // if (!userId) {
+            //     console.log('No user ID provided');
+            //     return;
+            // }
+            const schoolInfo = await teacherOps.getById(userId); // Assuming you want to fetch school by userId
+            if (schoolInfo) {
+                setteacherData(schoolInfo);
+                console.log('School data:', schoolInfo);
+            } else {
+                console.log('No school data found for this user ID');
+            }
+        } catch (error) {
+            console.error('Error fetching school data:', error);
+        }
+    };
     const navigation = useNavigation();
     return (
         // SafeAreaView ensures content is displayed within the safe area boundaries of the device
@@ -18,7 +58,7 @@ const TeacherLanding = () => {
                 {/* Header section */}
                 <View style={styles.headerContainer}>
                     <Text style={styles.welcomeText}>Welcome,</Text>
-                    <Text style={styles.nameText}>Mary Olwal</Text>
+                    <Text style={styles.nameText}>{teacherData?.teacherName}</Text>
                 </View>
             
 

@@ -1,30 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 import PropTypes from 'prop-types';
-import { teacherOps } from '../components/database';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import initializeDatabase from '../components/database';
 
 const TeacherProfile = ({ teacherId }) => {
   const [teacherProfile, setTeacherProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchTeacherProfile = async () => {
-      try {
-        const profile = await teacherOps.getById(teacherId);
-        setTeacherProfile(profile);
-      } catch (error) {
-        console.error('Error fetching teacher profile:', error);
-        setError('Failed to load profile. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
+  const [uuserId, setUserId] = useState(null);
+    const [teacherData, setteacherData] = useState(null);
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const id = await AsyncStorage.getItem('userId');
+                if (id !== null) {
+                    setUserId(id);
+                    await fetchSchoolData(id); // Fetch school data using user ID
+                } else {
+                    console.log('No user ID found');
+                }
+            } catch (error) {
+                console.error('Error retrieving user ID from AsyncStorage:', error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
+
+    const fetchSchoolData = async (userId) => {
+        try {
+            const { teacherOps } = await initializeDatabase();
+            // if (!userId) {
+            //     console.log('No user ID provided');
+            //     return;
+            // }
+            const schoolInfo = await teacherOps.getById(userId); // Assuming you want to fetch school by userId
+            if (schoolInfo) {
+                setteacherData(schoolInfo);
+                console.log('School data:', schoolInfo);
+            } else {
+                console.log('No school data found for this user ID');
+            }
+        } catch (error) {
+            console.error('Error fetching school data:', error);
+        }
     };
 
-fetchTeacherProfile();
-  }, [teacherId]);
 
-  if (loading) {
+  if (!teacherData) {
     return (
       <SafeAreaView style={styles.container}>
         <Text style={styles.loadingText}>Loading profile...</Text>
@@ -32,21 +58,6 @@ fetchTeacherProfile();
     );
   }
 
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>{error}</Text>
-      </SafeAreaView>
-    );
-  }
-
-  if (!teacherProfile) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>Teacher not found.</Text>
-      </SafeAreaView>
-    );
-  }
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -60,28 +71,25 @@ fetchTeacherProfile();
       </View>
       <View style={styles.profileImageContainer}>
         <Image
-          source={teacherProfile.profileImage ? { uri: teacherProfile.profileImage } : require('../assets/images/profile.png')}
+          source={require('../assets/images/profile.png')}
           style={styles.profileImage}
         />
       </View>
-      <Text style={styles.name}>{`${teacherProfile.name} `}</Text>
+      <Text style={styles.name}>{`${teacherData?.teacherName} `}</Text>
   
       <View style={styles.detailsContainer}>
         <Text style={styles.detail}>
           <Text style={styles.label}>Teacher ID: </Text>
-          {teacherProfile.teacherId}
+          {teacherData?.teacherID}
         </Text>
-        <Text style={styles.detail}>
-          <Text style={styles.label}>Email: </Text>
-          {teacherProfile.email}
-        </Text>
+        
         <Text style={styles.detail}>
           <Text style={styles.label}>Date of Birth: </Text>
-          {formatDate(teacherProfile.dateOfBirth)}
+          {formatDate(teacherData?.dateOfBirth)}
         </Text>
         <Text style={styles.detail}>
           <Text style={styles.label}>Gender: </Text>
-          {teacherProfile.selectedGender}
+          {teacherData?.selectedGender}
         </Text>
       </View>
     </SafeAreaView>
