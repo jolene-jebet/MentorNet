@@ -1,9 +1,9 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker';
-import  initializeDatabase  from '../components/database';
+import initializeDatabase from '../components/database';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
@@ -31,7 +31,7 @@ const TeacherForm = () => {
       }
     };
 
-initDatabase();
+    initDatabase();
   }, []);
 
   const validate = () => {
@@ -78,7 +78,8 @@ initDatabase();
   const handleSubmit = async () => {
     if (validate()) {
       try {
-        const newTeacherId = await db.insert(teacherName, teacherID, email, telephone, dateOfBirth, selectedGender);
+        // Call the insert method from teacherOps
+        const newTeacherId = await db.insert(email, teacherName, teacherID, telephone, dateOfBirth, selectedGender);
         Alert.alert('Success', `New teacher added with ID: ${newTeacherId}`);
         // Clear form after successful submission
         setTeacherName('');
@@ -115,7 +116,7 @@ initDatabase();
             <Icon name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerText}>Teacher Registration</Text>
-          {/* <Image source={require('../assets/images/user.png')} style={styles.icon} /> */}
+          <Image source={require('../assets/images/user.png')} style={styles.icon} />
         </View>
 
         <View style={styles.form}>

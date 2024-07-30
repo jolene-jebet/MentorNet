@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from "react-native";
 import { Card, Text } from "react-native-elements";
 
+import { useNavigation } from "@react-navigation/native";
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');
 // Calculate card dimensions based on screen size
@@ -9,6 +10,7 @@ const cardWidth = width * 0.44;
 const cardHeight = height * 0.25;
 
 const TeacherLanding = () => {
+    const navigation = useNavigation();
     return (
         // SafeAreaView ensures content is displayed within the safe area boundaries of the device
         <SafeAreaView style={styles.safeArea}>
@@ -23,7 +25,7 @@ const TeacherLanding = () => {
                 {/* cards container */}
                 <View style={styles.cardsContainer}>
                     {/* profile card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('TeacherProfile')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}

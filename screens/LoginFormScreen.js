@@ -1,20 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import initializeDatabase from '../components/database'; // Adjust the path to your initializeDatabase module
+import initializeDatabase from '../components/database'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginFormScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [userOps, setUserOps] = useState(null);
     const navigation = useNavigation();
+
+    useEffect(() => {
+        const initDatabase = async () => {
+            try {
+                const { userOps } = await initializeDatabase();
+                setUserOps(userOps);
+                console.log('Database initialized successfully.');
+            } catch (error) {
+                console.error('Error initializing database:', error);
+                Alert.alert('Database Error', 'An error occurred while initializing the database.');
+            }
+        };
+
+        initDatabase();
+    }, []); // Runs once when the component mounts
 
     const handleLogin = async () => {
         console.log(`Logging in with email: ${email} and password: ${password}`);
+        if (!userOps) {
+            Alert.alert('Error', 'Database not initialized. Please try again later.');
+            return;
+        }
         try {
-            const { userOps } = await initializeDatabase();
             const userData = await userOps.login(email, password);
             if (userData) {
                 console.log('Login successful:', userData);
+                await AsyncStorage.clear(); // Clear AsyncStorage
+                await AsyncStorage.setItem('userId', userData.id.toString());
                 // Navigate to the appropriate screen based on user role
                 if (userData.role === 'admin') {
                     navigation.navigate('OwnerLanding');
@@ -92,7 +114,7 @@ const styles = StyleSheet.create({
         width: '80%',
         alignItems: 'center',
         marginTop: 50,
-        paddingBottom: 40, // Increased paddingBottom for more space at the bottom
+        paddingBottom: 40,
     },
     button: {
         width: '40%',

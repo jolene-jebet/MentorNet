@@ -73,6 +73,22 @@ const initializeDatabase = async () => {
         }
       },
     };
+// Teacher operations
+const teacherOps = {
+  insert: async (email, teacherName, teacherID, telephone, dateOfBirth, selectedGender) => {
+    try {
+      const userId = await userOps.insert(email, 'teacher', teacherID);
+      const result = await db.runAsync(
+        'INSERT INTO Teachers (userId, teacherName, teacherID, telephone, dateOfBirth, selectedGender) VALUES (?, ?, ?, ?, ?, ?)',
+        [userId, teacherName, teacherID, telephone, dateOfBirth, selectedGender]
+      );
+      return result.lastInsertRowId;
+    } catch (error) {
+      console.error('Error inserting teacher:', error);
+      throw error;
+    }
+  },
+};
 
     // School operations
     const schoolOps = {
@@ -92,9 +108,23 @@ const initializeDatabase = async () => {
           throw error;
         }
       },
+      getById: async (schoolId) => {
+        try {
+          const result = await db.getFirstAsync(
+            'SELECT schoolName, schoolLogo, address, telephone, missionValues FROM Schools WHERE id = ?',
+            [schoolId]
+          );
+          return result;
+        } catch (error) {
+          console.error('Error retrieving school by id:', error);
+          throw error;
+        }
+      }
+    
     };
+    
 
-    return { userOps, schoolOps };
+    return { userOps, schoolOps,teacherOps };
   } catch (error) {
     console.error('Error initializing database:', error);
     throw error;

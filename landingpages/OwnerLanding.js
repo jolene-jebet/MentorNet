@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from "react-native";
 import { Card, Text } from "react-native-elements";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import initializeDatabase from '../components/database';
+import { useNavigation } from "@react-navigation/native";
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');
 // Calculate card dimensions based on screen size
@@ -9,6 +11,46 @@ const cardWidth = width * 0.44;
 const cardHeight = height * 0.25;
 
 const OwnerLanding = () => {
+    const [uuserId, setUserId] = useState(null);
+    const [schoolData, setSchoolData] = useState(null);
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const id = await AsyncStorage.getItem('userId');
+                if (id !== null) {
+                    setUserId(id);
+                    await fetchSchoolData(id); // Fetch school data using user ID
+                } else {
+                    console.log('No user ID found');
+                }
+            } catch (error) {
+                console.error('Error retrieving user ID from AsyncStorage:', error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
+
+    const fetchSchoolData = async (userId) => {
+        try {
+            const { schoolOps } = await initializeDatabase();
+            // if (!userId) {
+            //     console.log('No user ID provided');
+            //     return;
+            // }
+            const schoolInfo = await schoolOps.getById(userId); // Assuming you want to fetch school by userId
+            if (schoolInfo) {
+                setSchoolData(schoolInfo);
+                console.log('School data:', schoolInfo);
+            } else {
+                console.log('No school data found for this user ID');
+            }
+        } catch (error) {
+            console.error('Error fetching school data:', error);
+        }
+    };
+
+    const navigation = useNavigation();
     return (
         // SafeAreaView ensures content is displayed within the safe area boundaries of the device
         <SafeAreaView style={styles.safeArea}>
@@ -16,14 +58,14 @@ const OwnerLanding = () => {
                 {/* Header section */}
                 <View style={styles.headerContainer}>
                     <Text style={styles.welcomeText}>Welcome,</Text>
-                    <Text style={styles.nameText}>Mary Olwal</Text>
+                    <Text style={styles.nameText}>{schoolData?.schoolName}</Text>
                 </View>
             
 
                 {/* cards container */}
                 <View style={styles.cardsContainer}>
                     {/* profile card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('SchoolProfile')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
@@ -57,7 +99,7 @@ const OwnerLanding = () => {
                     </TouchableOpacity>
 
                     {/* add teacher card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('TeacherForm')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
@@ -74,7 +116,7 @@ const OwnerLanding = () => {
                     </TouchableOpacity>
 
                     {/* add student card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('StudentForm')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}

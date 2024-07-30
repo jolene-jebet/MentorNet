@@ -146,6 +146,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from "react-native";
 import { Card, Text } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
 
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');
@@ -154,6 +155,8 @@ const cardWidth = width * 0.44;
 const cardHeight = height * 0.25;
 
 const StudentLanding = () => {
+
+    const navigation = useNavigation();
     return (
         // SafeAreaView ensures content is displayed within the safe area boundaries of the device
         <SafeAreaView style={styles.safeArea}>
@@ -168,7 +171,7 @@ const StudentLanding = () => {
                 {/* cards container */}
                 <View style={styles.cardsContainer}>
                     {/* profile card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('Profile')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
@@ -209,7 +212,7 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/library.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -226,7 +229,7 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/attendance.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -236,14 +239,14 @@ const StudentLanding = () => {
                     </TouchableOpacity>
 
                     {/* chat room card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('ChatRoom')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/chat-room.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -260,7 +263,7 @@ const StudentLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/school-svgrepo-com.svg')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
