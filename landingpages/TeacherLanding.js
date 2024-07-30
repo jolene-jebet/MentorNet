@@ -32,7 +32,7 @@ const TeacherLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/profile.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -42,14 +42,14 @@ const TeacherLanding = () => {
                     </TouchableOpacity>
 
                     {/* course work card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('TeacherCourseWork')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/course-work.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -66,7 +66,7 @@ const TeacherLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/library.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -76,14 +76,14 @@ const TeacherLanding = () => {
                     </TouchableOpacity>
 
                     {/* attendance card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('Attendance')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/attendance.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}
@@ -100,7 +100,7 @@ const TeacherLanding = () => {
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/classroom.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}

@@ -1,37 +1,39 @@
-
-import React, { useState,useEffect } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import  initializeDatabase  from '../components/database';
+import initializeDatabase from '../components/database';
 
 const StudentForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [studentId, setStudentId] = useState('');
   const [email, setEmail] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedGender, setSelectedGender] = useState('');
+  
   const [errors, setErrors] = useState({});
   const [formattedDate, setFormattedDate] = useState(dateOfBirth);
   const [db, setDb] = useState(null);
 
   const navigation = useNavigation();
+  
   useEffect(() => {
     const initDatabase = async () => {
       try {
-        const {studentOps } = await initializeDatabase();
+        const { studentOps } = await initializeDatabase();
         setDb(studentOps);
       } catch (error) {
         console.error('Error initializing database in component:', error);
       }
     };
 
-initDatabase();
+    initDatabase();
   }, []);
 
   const validate = () => {
@@ -45,6 +47,10 @@ initDatabase();
     if (!lastName) {
       valid = false;
       errors.lastName = 'Last Name is required';
+    }
+    if (!studentId) {
+      valid = false;
+      errors.studentId = 'Student ID is required';
     }
     if (!email) {
       valid = false;
@@ -72,25 +78,26 @@ initDatabase();
 
   const handleSubmit = async () => {
     if (validate()) {
-      if(db){
-    try {
-     const newStudentId = await db.insert(firstName, lastName, email, selectedClass, dateOfBirth, selectedGender);
-    
-      Alert.alert('Success', `New student added with ID: ${newStudentId}`);
-      // Clear form after successful submission
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setSelectedClass('');
-      setDateOfBirth('');
-      setSelectedGender('');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to add student: ' + error);
+      if (db) {
+        try {
+          const newStudentId = await db.insert(email, studentId, firstName, lastName, selectedClass, dateOfBirth, selectedGender);
+          Alert.alert('Success', `New student added with ID: ${newStudentId}`);
+          // Clear form after successful submission
+          setFirstName('');
+          setLastName('');
+          setStudentId('');
+          setEmail('');
+          setSelectedClass('');
+          setDateOfBirth('');
+          setSelectedGender('');
+        } catch (error) {
+          Alert.alert('Error', 'Failed to add student: ' + error);
+        }
+      } else {
+        Alert.alert('Error', 'Database is not initialized.');
+      }
     }
-  }else{
-    Alert.alert('Error', 'Database is not initialized.');
-  }}
-};
+  };
 
   const showDatepicker = () => {
     setShowCalendar(true);
@@ -164,6 +171,21 @@ initDatabase();
             </View>
             {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
           </View>
+          
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Student ID</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input}
+                value={studentId}
+                onChangeText={setStudentId}
+                placeholder="Student ID"
+                placeholderTextColor="black"
+              />
+              <Icon name="badge" size={20} color="black" style={styles.iconInsideInput} />
+            </View>
+            {errors.studentId && <Text style={styles.errorText}>{errors.studentId}</Text>}
+          </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Class</Text>
@@ -230,7 +252,6 @@ initDatabase();
     </SafeAreaView>
   );
 };
-
 
 const styles = StyleSheet.create({
   safeContainer: {

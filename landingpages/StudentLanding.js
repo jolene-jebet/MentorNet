@@ -188,14 +188,14 @@ const StudentLanding = () => {
                     </TouchableOpacity>
 
                     {/* course work card */}
-                    <TouchableOpacity style={styles.cardWrapper}>
+                    <TouchableOpacity style={styles.cardWrapper} onPress={() => navigation.navigate('CourseWork')}>
                         {/* card component with dynamic width and height */}
                         <Card containerStyle={[styles.card, { width: cardWidth, height: cardHeight }]}>
                             {/* card content */}
                             <View style={styles.cardContent}>
                                 {/* card image */}
                                 <Card.Image
-                                    source={require('../assets/images/account-avatar-profile-user-6-svgrepo-com.svg')}
+                                    source={require('../assets/images/course-work.png')}
                                     style={styles.cardImage}
                                 />
                                 {/* card title */}

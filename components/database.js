@@ -122,9 +122,25 @@ const teacherOps = {
       }
     
     };
+    // Student operations
+    const studentOps = {
+      insert: async (email, studentId, firstName, lastName, selectedClass, dateOfBirth, selectedGender) => {
+        try {
+          const userId = await userOps.insert(email, 'student', studentId);
+          const result = await db.runAsync(
+            'INSERT INTO Students (userId, firstName, lastName, selectedClass, dateOfBirth, selectedGender) VALUES (?, ?, ?, ?, ?, ?)',
+            [userId, firstName, lastName, selectedClass, dateOfBirth, selectedGender]
+          );
+          return result.lastInsertRowId;
+        } catch (error) {
+          console.error('Error inserting student:', error);
+          throw error;
+        }
+      }
+    };
     
 
-    return { userOps, schoolOps,teacherOps };
+    return { userOps, schoolOps,teacherOps,studentOps };
   } catch (error) {
     console.error('Error initializing database:', error);
     throw error;

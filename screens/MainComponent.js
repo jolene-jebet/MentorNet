@@ -17,6 +17,10 @@ import SchoolProfile from '../ownerpages/profile';
 import SchoolForm from '../forms/SchoolForm';
 import TeacherForm from '../forms/TeacherForm';
 import StudentForm from '../forms/StudentForm';
+import Attendance from '../teacherpages/Attendance';
+import TeacherCourseWork from '../teacherpages/TeacherCourseWork';
+import CourseWork from '../studentpages/CourseWork';
+
 // Create a stack navigator
 const Stack = createStackNavigator();
 
@@ -85,6 +89,20 @@ const HomeNavigator = () => {
             <Stack.Screen
                 name='ChatRoom'
                 component={ChatRoom}
+            />
+            <Stack.Screen
+                name='TeacherCourseWork'
+                component={TeacherCourseWork}
+                />
+
+            <Stack.Screen
+                name='CourseWork'
+                component={CourseWork}
+            />
+
+            <Stack.Screen
+                name='Attendance'
+                component={Attendance}
             />
         </Stack.Navigator>
     );
