@@ -136,6 +136,18 @@ const teacherOps = {
           console.error('Error inserting student:', error);
           throw error;
         }
+      },
+      getById: async (userId) => {
+        try {
+          const result = await db.getFirstAsync(
+            'SELECT firstName, lastName, selectedClass, dateOfBirth, selectedGender FROM Students WHERE userId = ?',
+            [userId]
+          );
+          return result;
+        } catch (error) {
+          console.error('Error retrieving student by userId:', error);
+          throw error;
+        }
       }
     };
     

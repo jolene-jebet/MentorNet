@@ -2,29 +2,55 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 import PropTypes from 'prop-types';
 import { studentOps } from '../components/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import initializeDatabase from '../components/database';
 
 const Profile = ({ studentId }) => {
   const [studentProfile, setStudentProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchStudentProfile = async () => {
-      try {
-        const profile = await studentOps.getById(studentId);
-        setStudentProfile(profile);
-      } catch (error) {
-        console.error('Error fetching student profile:', error);
-        setError('Failed to load profile. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
+  const [uuserId, setUserId] = useState(null);
+    const [studentData, setStudentData] = useState(null);
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const id = await AsyncStorage.getItem('userId');
+                if (id !== null) {
+                    setUserId(id);
+                    await fetchSchoolData(id); // Fetch school data using user ID
+                } else {
+                    console.log('No user ID found');
+                }
+            } catch (error) {
+                console.error('Error retrieving user ID from AsyncStorage:', error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
+
+    const fetchSchoolData = async (userId) => {
+        try {
+            const { studentOps } = await initializeDatabase();
+            // if (!userId) {
+            //     console.log('No user ID provided');
+            //     return;
+            // }
+            const schoolInfo = await studentOps.getById(userId); // Assuming you want to fetch school by userId
+            if (schoolInfo) {
+                setStudentData(schoolInfo);
+                console.log('School data:', schoolInfo);
+            } else {
+                console.log('No school data found for this user ID');
+            }
+        } catch (error) {
+            console.error('Error fetching school data:', error);
+        }
     };
 
-fetchStudentProfile();
-  }, [studentId]);
 
-  if (loading) {
+  if (!studentData) {
     return (
       <SafeAreaView style={styles.container}>
         <Text style={styles.loadingText}>Loading profile...</Text>
@@ -32,21 +58,7 @@ fetchStudentProfile();
     );
   }
 
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>{error}</Text>
-      </SafeAreaView>
-    );
-  }
-
-  if (!studentProfile) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>Student not found.</Text>
-      </SafeAreaView>
-    );
-  }
+  
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -59,29 +71,26 @@ fetchStudentProfile();
         <Text style={styles.headerText}>Profile</Text>
       </View>
       <View style={styles.profileImageContainer}>
-        {/* <Image
-          source={studentProfile.profileImage ? { uri: studentProfile.profileImage } : require('../assets/images/profile.png')}
+        <Image
+          source={require('../assets/images/profile.png')}
           style={styles.profileImage}
-        /> */}
+        />
       </View>
-      <Text style={styles.name}>{`${studentProfile.firstName}  ${studentProfile.lastName}`}</Text>
-      <Text style={styles.id}>{studentProfile.id}</Text>
+      <Text style={styles.name}>{`${studentData?.firstName}  ${studentData?.lastName}`}</Text>
+      <Text style={styles.id}>{uuserId}</Text>
       <View style={styles.detailsContainer}>
         <Text style={styles.detail}>
           <Text style={styles.label}>Class: </Text>
-          {studentProfile.selectedClass}
+          {studentData?.selectedClass}
         </Text>
-        <Text style={styles.detail}>
-          <Text style={styles.label}>Email: </Text>
-          {studentProfile.email}
-        </Text>
+        
         <Text style={styles.detail}>
           <Text style={styles.label}>Date of Birth: </Text>
-          {formatDate(studentProfile.dateOfBirth)}
+          {formatDate(studentData?.dateOfBirth)}
         </Text>
         <Text style={styles.detail}>
           <Text style={styles.label}>Gender: </Text>
-          {studentProfile.selectedGender}
+          {studentData?.selectedGender}
         </Text>
       </View>
     </SafeAreaView>
